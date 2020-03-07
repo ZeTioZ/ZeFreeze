@@ -1,0 +1,9 @@
+name: OpsyFreeze
+version: 0.0.3
+author: ZeTioZ
+main: fr.zetioz.opsyfreeze.OpsyFreezeMain
+website: https://opsycraft.fr/
+commands:
+  opsyfreeze:
+    aliases: [frz, freeze, ofrz, ofreeze]
+    description: OpsyFreeze main command
