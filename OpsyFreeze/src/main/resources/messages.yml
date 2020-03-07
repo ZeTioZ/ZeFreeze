@@ -1,0 +1,49 @@
+prefix: "&c[&dOpsy&bFreeze&c] "
+
+no-reason: "&aNo reason"
+
+player-frozen:
+  - "&2You have &cfrozen &b{player}&2!"
+  - "&2Reason: {reason}"
+  - "&2He can't move &canymore!"
+
+player-unfrozen:
+  - "&2You have &cunfrozen &b{player}&2!"
+  - "&2He can now move &cfreely!"
+  
+target-frozen:
+  - "&2You have been &cfrozen by &b{freezer}&2!"
+  - "&2Reason: {reason}"
+  - "&2You can't move &canymore!"
+
+target-unfrozen:
+  - "&2You have been &cunfrozen by &b{freezer}&2!"
+  - "&2You can now move &cfreely!"
+
+plugin-reload:
+  - "&2Plugin reloaded!"
+
+unfreeze-disconnect:
+  - "&b{player} &2has been unfrozen because he left the server."
+  
+staff-disconnect-alert:
+  - "&b{player} &chas left the server while being frozen!"
+
+help-page:
+  - "&d/opsyfreeze &c» &2Show the help page"
+  - "&d/opsyfreeze &b<player> &c» &2Freeze a player in place"
+  - "&d/opsyfreeze &bhelp &c» &2Show the help page"
+  - "&d/opsyfreeze &breload &c» &2Reload the plugin"
+  
+errors:
+  self-freeze:
+    - "&cYou can't freeze yourself!"
+  player-offline:
+    - "&cYou can only freeze online players!"
+  move-while-frozen:
+    - "&cSorry, but you can't move because you have been &4FROZEN &cby &b{freezer}!"
+    - "&cIf you think that's a mistake, feel free to contact a staff member at discord.opsycraft.fr"
+  not-enough-permissions:
+    - "&cSorry, but you don't have enough permissions to do that!"
+  invalid-sound:
+    - "The sound {sound} doesn't exist! Please change it in the configs file!"

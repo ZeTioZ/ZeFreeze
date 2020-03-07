@@ -1,0 +1,16 @@
+# Allow the console to make a command when a player leave the server while he is frozen
+disconnect-action:
+  enabled: true
+  commands:
+    - "money set {player} 0"
+    - "ban {player} {reason}"
+  
+# Unfreeze the player if he disconnect while being frozen
+unfreeze-on-disconnect: true
+
+# You can find all the available sound here https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
+# Sound played when the target is freezed
+freeze-sound: GHAST_SCREAM
+
+# Sound played when the target is unfreezed
+unfreeze-sound: PIG_DEATH
