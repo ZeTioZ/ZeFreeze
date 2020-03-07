@@ -56,8 +56,8 @@ public class OpsyFreezeCommand implements CommandExecutor {
 				{
 					if(sender.hasPermission("opsyfreeze.reload"))
 					{						
-						Bukkit.getPluginManager().disablePlugin(main);
-						Bukkit.getPluginManager().enablePlugin(main);
+						main.getPluginLoader().disablePlugin(main);
+						main.getPluginLoader().enablePlugin(main);
 						for(String line : messagesFile.getStringList("plugin-reload"))
 						{
 							line = ChatColor.translateAlternateColorCodes('&', line);

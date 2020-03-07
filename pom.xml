@@ -42,6 +42,9 @@
 				<descriptorRefs>
 					<descriptorRef>jar-with-dependencies</descriptorRef>
 				</descriptorRefs>
+				<excludes>
+                    <exclude>resources/**</exclude>
+                </excludes>
 				<appendAssemblyId>false</appendAssemblyId>
 				<finalName>${project.name}-${project.version}</finalName>
 			</configuration>
@@ -55,5 +58,10 @@
 			</configuration>
 		</plugin>
 	</plugins>
+	<resources>
+      <resource>
+        <directory>D:\Program Files\eclipse\Git\OpsyFreeze\src\resources</directory>
+      </resource>
+    </resources>
   </build>
 </project>
