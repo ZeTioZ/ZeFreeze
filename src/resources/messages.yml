@@ -40,6 +40,10 @@ errors:
     - "&cYou can't freeze yourself!"
   player-offline:
     - "&cYou can only freeze online players!"
+  player-already-frozen:
+    - "&b{player} &cis already frozen!"
+  player-not-frozen:
+    - "&b{player} &cis not frozen!"
   move-while-frozen:
     - "&cSorry, but you can't move because you have been &4FROZEN &cby &b{freezer}!"
     - "&cIf you think that's a mistake, feel free to contact a staff member at discord.opsycraft.fr"

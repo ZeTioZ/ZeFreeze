@@ -8,6 +8,9 @@ disconnect-action:
 # Unfreeze the player if he disconnect while being frozen
 unfreeze-on-disconnect: true
 
+# Enable the toggle function so when you type /freeze or /unfreeze it can freeze and unfreeze the player
+freeze-toggle: true
+
 # You can find all the available sound here https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
 # Sound played when the target is freezed
 freeze-sound: GHAST_SCREAM

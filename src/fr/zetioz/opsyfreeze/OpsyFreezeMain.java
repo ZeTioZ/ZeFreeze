@@ -29,6 +29,7 @@ public class OpsyFreezeMain extends JavaPlugin
 		registerEvents(this, ofe);
 		
 		getCommand("opsyfreeze").setExecutor(ofc);
+		getCommand("opsyunfreeze").setExecutor(ofc);
 			
 	}
 	
