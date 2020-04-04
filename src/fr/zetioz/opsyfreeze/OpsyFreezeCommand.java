@@ -1,5 +1,6 @@
 package fr.zetioz.opsyfreeze;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import fr.zetioz.opsyfreeze.object.Freeze;
 
 public class OpsyFreezeCommand implements CommandExecutor {
 
@@ -51,6 +54,44 @@ public class OpsyFreezeCommand implements CommandExecutor {
 				if(args[0].equalsIgnoreCase("help"))
 				{
 					sendHelpPage(sender);
+				}
+				else if(args[0].equalsIgnoreCase("info"))
+				{
+					if(sender.hasPermission("opsyfreeze.info"))
+					{						
+						UUID playerUUID = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
+						if(playerFrozen.containsKey(playerUUID))
+						{
+							DecimalFormat df = new DecimalFormat("#.##");
+							for(String line : messagesFile.getStringList("target-freeze-info"))
+							{
+								line = line.replace("{freezer}", playerFrozen.get(playerUUID).getFreezer());
+								line = line.replace("{reason}", playerFrozen.get(playerUUID).getReason());
+								line = line.replace("{loc_x}", df.format(playerFrozen.get(playerUUID).getLocation().getX()));
+								line = line.replace("{loc_y}", df.format(playerFrozen.get(playerUUID).getLocation().getY()));
+								line = line.replace("{loc_z}", df.format(playerFrozen.get(playerUUID).getLocation().getZ()));
+								line = ChatColor.translateAlternateColorCodes('&', line);
+								sender.sendMessage(prefix + line);
+							}
+						}
+						else
+						{
+							for(String line : messagesFile.getStringList("errors.player-not-frozen"))
+							{
+								line = line.replace("{player}", args[1]);
+								line = ChatColor.translateAlternateColorCodes('&', line);
+								sender.sendMessage(prefix + line);
+							}
+						}
+					}
+					else
+					{
+						for(String line : messagesFile.getStringList("errors.not-enough-permissions"))
+						{
+							line = ChatColor.translateAlternateColorCodes('&', line);
+							sender.sendMessage(prefix + line);
+						}
+					}
 				}
 				else if(args[0].equalsIgnoreCase("reload"))
 				{

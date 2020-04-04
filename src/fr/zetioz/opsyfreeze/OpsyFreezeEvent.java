@@ -13,6 +13,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import fr.zetioz.opsyfreeze.object.Freeze;
+
 public class OpsyFreezeEvent implements Listener
 {
 	private OpsyFreezeMain main;
@@ -45,13 +47,15 @@ public class OpsyFreezeEvent implements Listener
 		{
 			Freeze playerFreeze = playerFrozen.get(player.getUniqueId());
 			if(player.getLocation().getX() != playerFreeze.getLocation().getX()
-				&& player.getLocation().getZ() != playerFreeze.getLocation().getZ())
+				|| player.getLocation().getZ() != playerFreeze.getLocation().getZ()
+				|| (configsFile.getBoolean("block-y-axis")
+					&& player.getLocation().getY() != playerFreeze.getLocation().getY()))
 			{
 				player.teleport(playerFreeze.getLocation());
 				if(!playerErrorCooldown.containsKey(player.getUniqueId())
 					|| playerErrorCooldown.get(player.getUniqueId()) - System.currentTimeMillis() < 0)
 				{					
-					playerErrorCooldown.put(player.getUniqueId(), System.currentTimeMillis() + 5000);
+					playerErrorCooldown.put(player.getUniqueId(), System.currentTimeMillis() + (configsFile.getLong("freeze-message-cooldown") * 1000));
 					for(String line : messagesFile.getStringList("errors.move-while-frozen"))
 					{
 						line = line.replace("{freezer}", playerFrozen.get(player.getUniqueId()).getFreezer());

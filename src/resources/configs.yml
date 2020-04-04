@@ -11,6 +11,12 @@ unfreeze-on-disconnect: true
 # Enable the toggle function so when you type /freeze or /unfreeze it can freeze and unfreeze the player
 freeze-toggle: true
 
+# Block the Y axe of movement while frozen avoiding players to jump or flying up and down
+block-y-axis: true
+
+# Set the freeze message cooldown in seconds to not spam the player chat while the player moves
+freeze-message-cooldown: 5
+
 # You can find all the available sound here https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
 # Sound played when the target is freezed
 freeze-sound: GHAST_SCREAM

@@ -19,6 +19,13 @@ target-frozen:
 target-unfrozen:
   - "&2You have been &cunfrozen by &b{freezer}&2!"
   - "&2You can now move &cfreely!"
+  
+target-freeze-info:
+  - "&2&m=====&r &dOpsy&bFreeze &c- &d&lInfo &2&m=====&r"
+  - "&6Freezer &c» &b{freezer}"
+  - "&6Reason &c» &2{reason}"
+  - "&6Location &c» &2X: &e{loc_x}&2, Y: &e{loc_y}&2, Z: &e{loc_z}"
+  - "&2&m=====&r &dOpsy&bFreeze &c- &d&lInfo &2&m=====&r"
 
 plugin-reload:
   - "&2Plugin reloaded!"
@@ -32,6 +39,7 @@ staff-disconnect-alert:
 help-page:
   - "&d/opsyfreeze &c» &2Show the help page"
   - "&d/opsyfreeze &b<player> &c» &2Freeze a player in place"
+  - "&d/opsyfreeze info &b<player> &c» &2Info about why a player is frozen"
   - "&d/opsyfreeze &bhelp &c» &2Show the help page"
   - "&d/opsyfreeze &breload &c» &2Reload the plugin"
   

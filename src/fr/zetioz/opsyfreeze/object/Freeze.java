@@ -1,4 +1,4 @@
-package fr.zetioz.opsyfreeze;
+package fr.zetioz.opsyfreeze.object;
 
 import org.bukkit.Location;
 
