@@ -1,13 +1,15 @@
 package fr.zetioz.opsyfreeze;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,6 +18,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import fr.zetioz.opsyfreeze.object.Freeze;
+import fr.zetioz.opsyfreeze.utils.ColorUtils;
 
 public class OpsyFreezeCommand implements CommandExecutor {
 
@@ -30,8 +33,8 @@ public class OpsyFreezeCommand implements CommandExecutor {
 		this.main = main;
 		this.messagesFile = main.getFilesManager().getMessagesFile();
 		this.configsFile = main.getFilesManager().getConfigsFile();
-		this.playerFrozen = new HashMap<>();
-		this.prefix = ChatColor.translateAlternateColorCodes('&',  this.messagesFile.getString("prefix"));
+		this.playerFrozen = main.getPlayerFrozen();
+		this.prefix = ColorUtils.color(messagesFile.getString("prefix"));
 	}
 	
 	public void setPlayerFrozen(Map<UUID, Freeze> playerFrozen)
@@ -47,13 +50,13 @@ public class OpsyFreezeCommand implements CommandExecutor {
 		{
 			if(args.length == 0)
 			{
-				sendHelpPage(sender);
+				ColorUtils.sendMessage(sender, messagesFile.getStringList("help-page"), prefix);
 			}
 			else if(args.length >= 1)
 			{
 				if(args[0].equalsIgnoreCase("help"))
 				{
-					sendHelpPage(sender);
+					ColorUtils.sendMessage(sender, messagesFile.getStringList("help-page"), prefix);
 				}
 				else if(args[0].equalsIgnoreCase("info"))
 				{
@@ -63,34 +66,20 @@ public class OpsyFreezeCommand implements CommandExecutor {
 						if(playerFrozen.containsKey(playerUUID))
 						{
 							DecimalFormat df = new DecimalFormat("#.##");
-							for(String line : messagesFile.getStringList("target-freeze-info"))
-							{
-								line = line.replace("{freezer}", playerFrozen.get(playerUUID).getFreezer());
-								line = line.replace("{reason}", playerFrozen.get(playerUUID).getReason());
-								line = line.replace("{loc_x}", df.format(playerFrozen.get(playerUUID).getLocation().getX()));
-								line = line.replace("{loc_y}", df.format(playerFrozen.get(playerUUID).getLocation().getY()));
-								line = line.replace("{loc_z}", df.format(playerFrozen.get(playerUUID).getLocation().getZ()));
-								line = ChatColor.translateAlternateColorCodes('&', line);
-								sender.sendMessage(prefix + line);
-							}
+							ColorUtils.sendMessage(sender, messagesFile.getStringList("target-freeze-info"), prefix, "{freezer}", playerFrozen.get(playerUUID).getFreezer()
+																												   , "{reason}", playerFrozen.get(playerUUID).getReason()
+																												   , "{loc_x}", df.format(playerFrozen.get(playerUUID).getLocation().getX())
+																												   , "{loc_y}", df.format(playerFrozen.get(playerUUID).getLocation().getY())
+																												   , "{loc_z}", df.format(playerFrozen.get(playerUUID).getLocation().getZ()));
 						}
 						else
 						{
-							for(String line : messagesFile.getStringList("errors.player-not-frozen"))
-							{
-								line = line.replace("{player}", args[1]);
-								line = ChatColor.translateAlternateColorCodes('&', line);
-								sender.sendMessage(prefix + line);
-							}
+							ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.player-not-frozen"), prefix, "{player}", args[1]);
 						}
 					}
 					else
 					{
-						for(String line : messagesFile.getStringList("errors.not-enough-permissions"))
-						{
-							line = ChatColor.translateAlternateColorCodes('&', line);
-							sender.sendMessage(prefix + line);
-						}
+						ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.not-enough-permissions"), prefix);
 					}
 				}
 				else if(args[0].equalsIgnoreCase("reload"))
@@ -99,20 +88,73 @@ public class OpsyFreezeCommand implements CommandExecutor {
 					{						
 						Bukkit.getPluginManager().disablePlugin(main);
 						Bukkit.getPluginManager().enablePlugin(main);
-						for(String line : messagesFile.getStringList("plugin-reload"))
-						{
-							line = ChatColor.translateAlternateColorCodes('&', line);
-							sender.sendMessage(prefix + line);
-						}
+						ColorUtils.sendMessage(sender, messagesFile.getStringList("plugin-reload"), prefix);
 					}
 					else
 					{
-						for(String line : messagesFile.getStringList("errors.not-enough-permissions"))
+						ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.not-enough-permissions"), prefix);
+					}
+				}
+				else if(args[0].equalsIgnoreCase("control"))
+				{
+					if(!(sender instanceof Player))
+					{
+						ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.player-only"), prefix);
+						return true;
+					}
+					final Player senderPlayer = (Player) sender;
+					if(sender.hasPermission("opsyfreeze.control.set"))
+					{
+						if(args[1] != null && args[1].equalsIgnoreCase("set"))
 						{
-							line = ChatColor.translateAlternateColorCodes('&', line);
-							sender.sendMessage(prefix + line);
+							configsFile.set("control-location.world", senderPlayer.getLocation().getWorld().getName());
+							configsFile.set("control-location.x", senderPlayer.getLocation().getBlockX());
+							configsFile.set("control-location.y", senderPlayer.getLocation().getBlockY());
+							configsFile.set("control-location.z", senderPlayer.getLocation().getBlockZ());
+							try
+							{
+								configsFile.save(new File(main.getPlugin().getDataFolder(), "configs.yml"));
+							}
+							catch (IOException e)
+							{
+								e.printStackTrace();
+							}
+							return true;
 						}
 					}
+					if(sender.hasPermission("opsyfreeze.control"))
+					{
+						if(!configsFile.isConfigurationSection("control-location"))
+						{
+							ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.control-location-not-set"), prefix);
+							return true;
+						}
+						if(!Bukkit.getOfflinePlayer(args[0]).isOnline())
+						{
+							ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.player-offline"), prefix);
+							return true;
+						}
+						final Player frozenPlayer = Bukkit.getPlayer(args[0]);
+						if(!playerFrozen.containsKey(frozenPlayer.getUniqueId()))
+						{
+							ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.player-not-frozen"), prefix, "{player}", args[0]);
+							return true;
+						}
+						final String freezer = playerFrozen.get(frozenPlayer.getUniqueId()).getFreezer();
+						final String reason = playerFrozen.get(frozenPlayer.getUniqueId()).getReason();
+						playerFrozen.remove(frozenPlayer.getUniqueId());
+						final String controlWorld = configsFile.getString("control-location.world");
+						final double controlX = configsFile.getDouble("control-location.x");
+						final double controlY = configsFile.getDouble("control-location.y");
+						final double controlZ = configsFile.getDouble("control-location.z");
+						final Location controlLocation = new Location(Bukkit.getWorld(controlWorld), Math.round(controlX), Math.round(controlY), Math.round(controlZ));
+						frozenPlayer.teleport(controlLocation);
+						playerFrozen.put(frozenPlayer.getUniqueId(), new Freeze(freezer, reason, controlLocation));
+						((Player) sender).teleport(controlLocation);
+						return true;
+					}
+					ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.not-enough-permissions"), prefix);
+					return true;
 				}
 				else if(Bukkit.getOfflinePlayer(args[0]).isOnline())
 				{
@@ -125,12 +167,7 @@ public class OpsyFreezeCommand implements CommandExecutor {
 							{
 								if(!configsFile.getBoolean("freeze-toggle"))
 								{
-									for(String line : messagesFile.getStringList("errors.player-already-frozen"))
-									{
-										line = line.replace("{player}", player.getName());
-										line = ChatColor.translateAlternateColorCodes('&', line);
-										sender.sendMessage(prefix + line);
-									}
+									ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.player-already-frozen"), prefix, "{player}", player.getName());
 									return false;
 								}
 								playerFrozen.remove(player.getUniqueId());
@@ -147,18 +184,8 @@ public class OpsyFreezeCommand implements CommandExecutor {
 										main.getLogger().warning(line);
 									}
 								}
-								for(String line : messagesFile.getStringList("player-unfrozen"))
-								{
-									line = line.replace("{player}", player.getName());
-									line = ChatColor.translateAlternateColorCodes('&', line);
-									sender.sendMessage(prefix + line);
-								}
-								for(String line : messagesFile.getStringList("target-unfrozen"))
-								{
-									line = line.replace("{freezer}", sender.getName());
-									line = ChatColor.translateAlternateColorCodes('&', line);
-									player.sendMessage(prefix + line);
-								}
+								ColorUtils.sendMessage(sender, messagesFile.getStringList("player-unfrozen"), prefix, "{player}", player.getName());
+								ColorUtils.sendMessage(player, messagesFile.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
 							}
 							else
 							{
@@ -200,48 +227,25 @@ public class OpsyFreezeCommand implements CommandExecutor {
 										main.getLogger().warning(line);
 									}
 								}
-								for(String line : messagesFile.getStringList("player-frozen"))
-								{
-									line = line.replace("{player}", player.getName());
-									line = line.replace("{reason}", reason);
-									line = ChatColor.translateAlternateColorCodes('&', line);
-									sender.sendMessage(prefix + line);
-								}
-								for(String line : messagesFile.getStringList("target-frozen"))
-								{
-									line = line.replace("{freezer}", sender.getName());
-									line = line.replace("{reason}", reason);
-									line = ChatColor.translateAlternateColorCodes('&', line);
-									player.sendMessage(prefix + line);
-								}
+								ColorUtils.sendMessage(sender, messagesFile.getStringList("player-frozen"), prefix, "{player}", player.getName()
+																												  , "{reason}", reason);
+								ColorUtils.sendMessage(sender, messagesFile.getStringList("target-frozen"), prefix, "{freezer}", sender.getName()
+																												  , "{reason}", reason);
 							}
-							main.getOFE().setPlayerFrozen(playerFrozen);
 						}
 						else
 						{
-							for(String line : messagesFile.getStringList("errors.self-freeze"))
-							{
-								line = ChatColor.translateAlternateColorCodes('&', line);
-								sender.sendMessage(prefix + line);
-							}
+							ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.self-freeze"), prefix);
 						}
 					}
 					else
 					{
-						for(String line : messagesFile.getStringList("errors.not-enough-permissions"))
-						{
-							line = ChatColor.translateAlternateColorCodes('&', line);
-							sender.sendMessage(prefix + line);
-						}
+						ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.not-enough-permissions"), prefix);
 					}
 				}
 				else
 				{
-					for(String line : messagesFile.getStringList("errors.player-offline"))
-					{
-						line = ChatColor.translateAlternateColorCodes('&', line);
-						sender.sendMessage(prefix + line);
-					}
+					ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.player-offline"), prefix);
 				}
 			}
 		}
@@ -249,7 +253,7 @@ public class OpsyFreezeCommand implements CommandExecutor {
 		{
 			if(args.length == 0)
 			{
-				sendHelpPage(sender);
+				ColorUtils.sendMessage(sender, messagesFile.getStringList("help-page"), prefix);
 			}
 			else if(args.length >= 1)
 			{
@@ -264,12 +268,7 @@ public class OpsyFreezeCommand implements CommandExecutor {
 							{
 								if(!configsFile.getBoolean("freeze-toggle"))
 								{
-									for(String line : messagesFile.getStringList("errors.player-not-frozen"))
-									{
-										line = line.replace("{player}", player.getName());
-										line = ChatColor.translateAlternateColorCodes('&', line);
-										sender.sendMessage(prefix + line);
-									}
+									ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.player-not-frozen"), prefix, "{player}", player.getName());
 									return false;
 								}
 								String reason;
@@ -310,20 +309,10 @@ public class OpsyFreezeCommand implements CommandExecutor {
 										main.getLogger().warning(line);
 									}
 								}
-								for(String line : messagesFile.getStringList("player-frozen"))
-								{
-									line = line.replace("{player}", player.getName());
-									line = line.replace("{reason}", reason);
-									line = ChatColor.translateAlternateColorCodes('&', line);
-									sender.sendMessage(prefix + line);
-								}
-								for(String line : messagesFile.getStringList("target-frozen"))
-								{
-									line = line.replace("{freezer}", sender.getName());
-									line = line.replace("{reason}", reason);
-									line = ChatColor.translateAlternateColorCodes('&', line);
-									player.sendMessage(prefix + line);
-								}
+								ColorUtils.sendMessage(sender, messagesFile.getStringList("player-frozen"), prefix, "{player}", player.getName()
+																												  , "{reason}", reason);
+								ColorUtils.sendMessage(sender, messagesFile.getStringList("target-frozen"), prefix, "{freezer}", sender.getName()
+																												  , "{reason}", reason);
 							}
 							else
 							{
@@ -341,59 +330,26 @@ public class OpsyFreezeCommand implements CommandExecutor {
 										main.getLogger().warning(line);
 									}
 								}
-								for(String line : messagesFile.getStringList("player-unfrozen"))
-								{
-									line = line.replace("{player}", player.getName());
-									line = ChatColor.translateAlternateColorCodes('&', line);
-									sender.sendMessage(prefix + line);
-								}
-								for(String line : messagesFile.getStringList("target-unfrozen"))
-								{
-									line = line.replace("{freezer}", sender.getName());
-									line = ChatColor.translateAlternateColorCodes('&', line);
-									player.sendMessage(prefix + line);
-								}
+								ColorUtils.sendMessage(sender, messagesFile.getStringList("player-unfrozen"), prefix, "{player}", player.getName());
+								ColorUtils.sendMessage(sender, messagesFile.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
 							}
-							main.getOFE().setPlayerFrozen(playerFrozen);
 						}
 						else
 						{
-							for(String line : messagesFile.getStringList("errors.self-freeze"))
-							{
-								line = ChatColor.translateAlternateColorCodes('&', line);
-								sender.sendMessage(prefix + line);
-							}
+							ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.self-freeze"), prefix);
 						}
 					}
 					else
 					{
-						for(String line : messagesFile.getStringList("errors.not-enough-permissions"))
-						{
-							line = ChatColor.translateAlternateColorCodes('&', line);
-							sender.sendMessage(prefix + line);
-						}
+						ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.not-enough-permissions"), prefix);
 					}
 				}
 				else
 				{
-					for(String line : messagesFile.getStringList("errors.player-offline"))
-					{
-						line = ChatColor.translateAlternateColorCodes('&', line);
-						sender.sendMessage(prefix + line);
-					}
+					ColorUtils.sendMessage(sender, messagesFile.getStringList("errors.player-offline"), prefix);
 				}
 			}
 		}
 		return false;
 	}
-
-	private void sendHelpPage(CommandSender sender)
-	{
-		for(String line : messagesFile.getStringList("help-page"))
-		{
-			line = ChatColor.translateAlternateColorCodes('&', line);
-			sender.sendMessage(prefix + line);
-		}
-	}
-
 }

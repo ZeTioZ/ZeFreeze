@@ -1,10 +1,17 @@
 package fr.zetioz.opsyfreeze;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import fr.zetioz.opsyfreeze.events.OpsyFreezePlayerMoveEvent;
+import fr.zetioz.opsyfreeze.events.OpsyFreezePlayerQuitEvent;
+import fr.zetioz.opsyfreeze.object.Freeze;
 import fr.zetioz.opsyfreeze.utils.FilesManager;
 
 public class OpsyFreezeMain extends JavaPlugin
@@ -12,7 +19,7 @@ public class OpsyFreezeMain extends JavaPlugin
 	private Plugin plugin;
 	private FilesManager filesManager;
 	private OpsyFreezeCommand ofc;
-	private OpsyFreezeEvent ofe;
+	private Map<UUID, Freeze> playerFrozen;
 	
 	@Override
 	public void onEnable()
@@ -22,11 +29,12 @@ public class OpsyFreezeMain extends JavaPlugin
 		filesManager.createConfigsFile();
 		filesManager.createMessagesFile();
 		
+		playerFrozen = new HashMap<>();
 		
-		ofe = new OpsyFreezeEvent(this);
 		ofc = new OpsyFreezeCommand(this);
 		
-		registerEvents(this, ofe);
+		registerEvents(this, new OpsyFreezePlayerMoveEvent(this)
+						   , new OpsyFreezePlayerQuitEvent(this));
 		
 		getCommand("opsyfreeze").setExecutor(ofc);
 		getCommand("opsyunfreeze").setExecutor(ofc);
@@ -49,21 +57,21 @@ public class OpsyFreezeMain extends JavaPlugin
 		return this.filesManager;
 	}
 	
-	public OpsyFreezeCommand getOFC()
-	{
-		return this.ofc;
-	}
-	
-	public OpsyFreezeEvent getOFE()
-	{
-		return this.ofe;
-	}
-	
 	private void registerEvents(Plugin plugin, Listener... listeners)
 	{
 		for(Listener listener : listeners)
 		{
 			Bukkit.getPluginManager().registerEvents(listener, plugin);
 		}
+	}
+
+	public Map<UUID, Freeze> getPlayerFrozen()
+	{
+		return playerFrozen;
+	}
+
+	public void setPlayerFrozen(Map<UUID, Freeze> playerFrozen)
+	{
+		this.playerFrozen = playerFrozen;
 	}
 }

@@ -39,15 +39,19 @@ staff-disconnect-alert:
 help-page:
   - "&d/opsyfreeze &c» &2Show the help page"
   - "&d/opsyfreeze &b<player> &c» &2Freeze a player in place"
+  - "&d/opsyfreeze control &b<player> &c» &2Teleport a frozen player to the control point"
+  - "&d/opsyfreeze control set &c» &2Set the control point location"
   - "&d/opsyfreeze info &b<player> &c» &2Info about why a player is frozen"
   - "&d/opsyfreeze &bhelp &c» &2Show the help page"
   - "&d/opsyfreeze &breload &c» &2Reload the plugin"
+  - " "
+  - "&d/opsyunfreeze &b<player> &c» &2Unfreeze a frozen player"
   
 errors:
   self-freeze:
     - "&cYou can't freeze yourself!"
   player-offline:
-    - "&cYou can only freeze online players!"
+    - "&cThis player is offline!"
   player-already-frozen:
     - "&b{player} &cis already frozen!"
   player-not-frozen:
@@ -58,4 +62,8 @@ errors:
   not-enough-permissions:
     - "&cSorry, but you don't have enough permissions to do that!"
   invalid-sound:
-    - "The sound {sound} doesn't exist! Please change it in the configs file!"
+    - "The sound {sound} doesn't exist! Please change it in the config file!"
+  control-location-not-set:
+    - "&cYou haven't set any control location yet!"
+  player-only:
+    - "&cYou need to be a player to perform that action!"

@@ -23,3 +23,5 @@ freeze-sound: GHAST_SCREAM
 
 # Sound played when the target is unfreezed
 unfreeze-sound: PIG_DEATH
+
+control-location:
