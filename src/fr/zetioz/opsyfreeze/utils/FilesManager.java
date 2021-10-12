@@ -5,24 +5,21 @@ import java.io.IOException;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
 import fr.zetioz.opsyfreeze.OpsyFreezeMain;
 
 public class FilesManager
 {
+	private final OpsyFreezeMain plugin;
+	private YamlConfiguration configsFileConfig;
+	private YamlConfiguration messagesFileConfig;
 	
-	private OpsyFreezeMain main;
-	private Plugin plugin;
-	
-	public FilesManager(OpsyFreezeMain main)
+	public FilesManager(OpsyFreezeMain plugin)
 	{
-		this.main = main;
-		this.plugin = this.main.getPlugin();
+		this.plugin = plugin;
 	}
 	
 	//region Configs File (Creator/Getter)
-    private YamlConfiguration configsFileConfig;
     
     public YamlConfiguration getConfigsFile()
     {
@@ -53,7 +50,6 @@ public class FilesManager
     //endregion
     
     //region Message File (Creator/Getter)
-    private YamlConfiguration messagesFileConfig;
 
     public YamlConfiguration getMessagesFile()
     {

@@ -16,7 +16,6 @@ import fr.zetioz.opsyfreeze.utils.ColorUtils;
 
 public class OpsyFreezePlayerMoveEvent implements Listener
 {
-	private OpsyFreezeMain main;
 	private Map<UUID, Freeze> playerFrozen;
 	private Map<UUID, Long> playerErrorCooldown;
 	private YamlConfiguration messagesFile;
@@ -25,11 +24,10 @@ public class OpsyFreezePlayerMoveEvent implements Listener
 	
 	public OpsyFreezePlayerMoveEvent(OpsyFreezeMain main)
 	{
-		this.main = main;
 		this.playerFrozen = main.getPlayerFrozen();
 		this.playerErrorCooldown = new HashMap<>();
-		this.messagesFile = this.main.getFilesManager().getMessagesFile();
-		this.configsFile = this.main.getFilesManager().getConfigsFile();
+		this.messagesFile = main.getFilesManager().getMessagesFile();
+		this.configsFile = main.getFilesManager().getConfigsFile();
 		this.prefix = ColorUtils.color(messagesFile.getString("prefix"));
 	}
 	

@@ -18,7 +18,6 @@ public class OpsyFreezeMain extends JavaPlugin
 {
 	private Plugin plugin;
 	private FilesManager filesManager;
-	private OpsyFreezeCommand ofc;
 	private Map<UUID, Freeze> playerFrozen;
 	
 	@Override
@@ -31,7 +30,7 @@ public class OpsyFreezeMain extends JavaPlugin
 		
 		playerFrozen = new HashMap<>();
 		
-		ofc = new OpsyFreezeCommand(this);
+		final OpsyFreezeCommand ofc = new OpsyFreezeCommand(this);
 		
 		registerEvents(this, new OpsyFreezePlayerMoveEvent(this)
 						   , new OpsyFreezePlayerQuitEvent(this));
