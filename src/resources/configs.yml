@@ -24,4 +24,16 @@ freeze-sound: GHAST_SCREAM
 # Sound played when the target is unfreezed
 unfreeze-sound: PIG_DEATH
 
+# Disable the interaction of a frozen player
+disable-interaction: true
+
+# Disable the damages of a frozen player
+disable-damages: true
+
+# Disable the possibility to place blocks from a frozen player
+disable-block-place: true
+
+# Disable the possibility to break block from a frozen player
+disable-block-break: true
+
 control-location:

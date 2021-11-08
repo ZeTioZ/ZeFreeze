@@ -4,13 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import fr.zetioz.opsyfreeze.events.*;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import fr.zetioz.opsyfreeze.events.OpsyFreezePlayerMoveEvent;
-import fr.zetioz.opsyfreeze.events.OpsyFreezePlayerQuitEvent;
 import fr.zetioz.opsyfreeze.object.Freeze;
 import fr.zetioz.opsyfreeze.utils.FilesManager;
 
@@ -33,7 +32,11 @@ public class OpsyFreezeMain extends JavaPlugin
 		final OpsyFreezeCommand ofc = new OpsyFreezeCommand(this);
 		
 		registerEvents(this, new OpsyFreezePlayerMoveEvent(this)
-						   , new OpsyFreezePlayerQuitEvent(this));
+								 , new OpsyFreezePlayerQuitEvent(this)
+								 , new OpsyFreezeBlockBreakEvent(this)
+								 , new OpsyFreezeBlockPlaceEvent(this)
+								 , new OpsyFreezePlayerInteractEvent(this)
+								 , new OpsyFreezeEntityDamageByEntityEvent(this));
 		
 		getCommand("opsyfreeze").setExecutor(ofc);
 		getCommand("opsyunfreeze").setExecutor(ofc);

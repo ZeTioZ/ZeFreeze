@@ -4,7 +4,7 @@
 
   <groupId>fr.zetioz</groupId>
   <artifactId>opsyfreeze</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <packaging>jar</packaging>
 
   <repositories>
@@ -42,9 +42,6 @@
 				<descriptorRefs>
 					<descriptorRef>jar-with-dependencies</descriptorRef>
 				</descriptorRefs>
-				<excludes>
-                    <exclude>resources/**</exclude>
-                </excludes>
 				<appendAssemblyId>false</appendAssemblyId>
 				<finalName>${project.name}-${project.version}</finalName>
 			</configuration>

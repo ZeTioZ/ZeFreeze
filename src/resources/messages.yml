@@ -56,9 +56,17 @@ errors:
     - "&b{player} &cis already frozen!"
   player-not-frozen:
     - "&b{player} &cis not frozen!"
+  damaged-a-frozen-player:
+    - "&cThis player is frozen, you can't damage him!"
+  damage-while-frozen:
+    - "&cYou can't damage an entity while being frozen!"
+  place-while-frozen:
+    - "&cYou can't place blocks while frozen!"
+  break-while-frozen:
+    - "&cYou can't break blocks while frozen!"
   move-while-frozen:
     - "&cSorry, but you can't move because you have been &4FROZEN &cby &b{freezer}!"
-    - "&cIf you think that's a mistake, feel free to contact a staff member at discord.opsycraft.fr"
+    - "&cIf you think that's a mistake, feel free to contact a staff member!"
   not-enough-permissions:
     - "&cSorry, but you don't have enough permissions to do that!"
   invalid-sound:
