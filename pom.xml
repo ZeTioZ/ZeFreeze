@@ -57,7 +57,7 @@
 	</plugins>
 	<resources>
       <resource>
-        <directory>D:\Program Files\eclipse\Git\OpsyFreeze\src\resources</directory>
+        <directory>./src/resources/</directory>
       </resource>
     </resources>
   </build>
