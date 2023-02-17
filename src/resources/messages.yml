@@ -1,4 +1,4 @@
-prefix: "&c[&dOpsy&bFreeze&c] "
+prefix: "&c[&dZe&bFreeze&c] "
 
 no-reason: "&aNo reason"
 
@@ -37,15 +37,15 @@ staff-disconnect-alert:
   - "&b{player} &chas left the server while being frozen!"
 
 help-page:
-  - "&d/opsyfreeze &c» &2Show the help page"
-  - "&d/opsyfreeze &b<player> &c» &2Freeze a player in place"
-  - "&d/opsyfreeze control &b<player> &c» &2Teleport a frozen player to the control point"
-  - "&d/opsyfreeze control set &c» &2Set the control point location"
-  - "&d/opsyfreeze info &b<player> &c» &2Info about why a player is frozen"
-  - "&d/opsyfreeze &bhelp &c» &2Show the help page"
-  - "&d/opsyfreeze &breload &c» &2Reload the plugin"
+  - "&d/zefreeze &c» &2Show the help page"
+  - "&d/zefreeze &b<player> &c» &2Freeze a player in place"
+  - "&d/zefreeze control &b<player> &c» &2Teleport a frozen player to the control point"
+  - "&d/zefreeze control set &c» &2Set the control point location"
+  - "&d/zefreeze info &b<player> &c» &2Info about why a player is frozen"
+  - "&d/zefreeze &bhelp &c» &2Show the help page"
+  - "&d/zefreeze &breload &c» &2Reload the plugin"
   - " "
-  - "&d/opsyunfreeze &b<player> &c» &2Unfreeze a frozen player"
+  - "&d/zeunfreeze &b<player> &c» &2Unfreeze a frozen player"
   
 errors:
   self-freeze:

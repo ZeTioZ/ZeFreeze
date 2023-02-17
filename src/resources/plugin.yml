@@ -1,11 +1,11 @@
-name: OpsyFreeze
-version: 0.3.0
+name: ZeFreeze
+version: 1.0.0
 author: ZeTioZ
-main: fr.zetioz.opsyfreeze.OpsyFreezeMain
+main: fr.zetioz.zefreeze.ZeFreezeMain
 commands:
-  opsyfreeze:
-    aliases: [frz, freeze, ofrz, ofreeze]
-    description: OpsyFreeze main command
-  opsyunfreeze:
-    aliases: [unfrz, unfreeze, ounfrz, ounfreeze]
-    description: OpsyFreeze unfreeze command
+  zefreeze:
+    aliases: [frz, freeze, zfrz, zfreeze]
+    description: ZeFreeze main command
+  zeunfreeze:
+    aliases: [unfrz, unfreeze, zunfrz, zunfreeze]
+    description: ZeFreeze unfreeze command
