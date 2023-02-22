@@ -29,10 +29,12 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 	private Map<UUID, Freeze> playerFrozen;
 	private String prefix;
 
-	public ZeFreezeCommand(ZeFreezeMain instance)
+	public ZeFreezeCommand(ZeFreezeMain instance) throws FileNotFoundException
 	{
 		this.instance = instance;
 		this.playerFrozen = instance.getPlayerFrozen();
+		instance.getFilesManagerUtils().addReloadable(this);
+		this.reloadFiles();
 	}
 	
 	@Override
@@ -103,17 +105,15 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 						return true;
 					}
 					final Player senderPlayer = (Player) sender;
-					if(sender.hasPermission("zefreeze.control.set"))
+					if(sender.hasPermission("zefreeze.control.set")
+						&& args[1] != null && args[1].equalsIgnoreCase("set"))
 					{
-						if(args[1] != null && args[1].equalsIgnoreCase("set"))
-						{
-							config.set("control-location.world", senderPlayer.getLocation().getWorld().getName());
-							config.set("control-location.x", senderPlayer.getLocation().getBlockX());
-							config.set("control-location.y", senderPlayer.getLocation().getBlockY());
-							config.set("control-location.z", senderPlayer.getLocation().getBlockZ());
-							instance.getFilesManagerUtils().saveSimpleYaml("config");
-							return true;
-						}
+						config.set("control-location.world", senderPlayer.getLocation().getWorld().getName());
+						config.set("control-location.x", senderPlayer.getLocation().getBlockX());
+						config.set("control-location.y", senderPlayer.getLocation().getBlockY());
+						config.set("control-location.z", senderPlayer.getLocation().getBlockZ());
+						instance.getFilesManagerUtils().saveSimpleYaml("config");
+						return true;
 					}
 					if(sender.hasPermission("zefreeze.control"))
 					{

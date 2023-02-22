@@ -65,7 +65,7 @@ errors:
   place-while-frozen:
     - "&cYou can't place blocks while frozen!"
   break-while-frozen:
-    - "&cYou can't break blocks while frozen!"
+    - "&cYou can't break block while frozen!"
   move-while-frozen:
     - "&cSorry, but you can't move because you have been &4FROZEN &cby &b{freezer}!"
     - "&cIf you think that's a mistake, feel free to contact a staff member!"
