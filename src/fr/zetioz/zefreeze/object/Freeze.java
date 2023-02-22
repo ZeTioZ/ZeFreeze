@@ -2,7 +2,7 @@ package fr.zetioz.zefreeze.object;
 
 import org.bukkit.Location;
 
-import net.md_5.bungee.api.ChatColor;
+import static fr.zetioz.coreutils.ColorUtils.color;
 
 public class Freeze {
 	
@@ -13,7 +13,7 @@ public class Freeze {
 	public Freeze(String freezer, String reason, Location location)
 	{
 		this.freezer = freezer;
-		this.reason = ChatColor.translateAlternateColorCodes('&', reason);
+		this.reason = color(reason);
 		this.location = location;
 	}
 	

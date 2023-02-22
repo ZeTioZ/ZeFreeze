@@ -21,11 +21,11 @@ target-unfrozen:
   - "&2You can now move &cfreely!"
   
 target-freeze-info:
-  - "&2&m=====&r &dOpsy&bFreeze &c- &d&lInfo &2&m=====&r"
+  - "&2&m=====&r &dZe&bFreeze &c- &d&lInfo &2&m=====&r"
   - "&6Freezer &c» &b{freezer}"
   - "&6Reason &c» &2{reason}"
   - "&6Location &c» &2X: &e{loc_x}&2, Y: &e{loc_y}&2, Z: &e{loc_z}"
-  - "&2&m=====&r &dOpsy&bFreeze &c- &d&lInfo &2&m=====&r"
+  - "&2&m=====&r &dZe&bFreeze &c- &d&lInfo &2&m=====&r"
 
 plugin-reload:
   - "&2Plugin reloaded!"
@@ -37,6 +37,7 @@ staff-disconnect-alert:
   - "&b{player} &chas left the server while being frozen!"
 
 help-page:
+  - "&2&m=====&r &dZe&bFreeze &c- &d&lInfo &2&m=====&r"
   - "&d/zefreeze &c» &2Show the help page"
   - "&d/zefreeze &b<player> &c» &2Freeze a player in place"
   - "&d/zefreeze control &b<player> &c» &2Teleport a frozen player to the control point"
@@ -46,6 +47,7 @@ help-page:
   - "&d/zefreeze &breload &c» &2Reload the plugin"
   - " "
   - "&d/zeunfreeze &b<player> &c» &2Unfreeze a frozen player"
+  - "&2&m=====&r &dZe&bFreeze &c- &d&lInfo &2&m=====&r"
   
 errors:
   self-freeze:
@@ -73,5 +75,7 @@ errors:
     - "The sound {sound} doesn't exist! Please change it in the config file!"
   control-location-not-set:
     - "&cYou haven't set any control location yet!"
+  blocked-command:
+    - "&cSince &b{freezer} &chas frozen you for &2{reason}&c, you can't use &d{command}&c!"
   player-only:
     - "&cYou need to be a player to perform that action!"

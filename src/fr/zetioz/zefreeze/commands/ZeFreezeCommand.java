@@ -39,7 +39,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 	{
 		this.messages = instance.getFilesManagerUtils().getSimpleYaml("messages");
 		this.config = instance.getFilesManagerUtils().getSimpleYaml("config");
-		this.prefix = messages.getString("prefix");
+		this.prefix = messages.getString("prefix", "&c[&6ZeFreeze&c] &r");
 	}
 	
 	@SuppressWarnings("deprecation")

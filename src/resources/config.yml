@@ -4,7 +4,12 @@ disconnect-action:
   commands:
     - "money set {player} 0"
     - "ban {player} {reason}"
-  
+
+# Block the player from making commands when he is frozen
+block-commands:
+  enabled: true
+  whitelist: []
+
 # Unfreeze the player if he disconnect while being frozen
 unfreeze-on-disconnect: true
 
