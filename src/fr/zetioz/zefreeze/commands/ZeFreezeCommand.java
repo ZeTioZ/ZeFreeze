@@ -9,6 +9,7 @@ import fr.zetioz.coreutils.SoundUtils;
 import fr.zetioz.zefreeze.ZeFreezeMain;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -149,24 +150,28 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 					sendMessage(sender, messages.getStringList("errors.not-enough-permissions"), prefix);
 					return true;
 				}
-				else if(Bukkit.getOfflinePlayer(args[0]).isOnline())
+				else if(Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore())
 				{
 					if(sender.hasPermission("zefreeze.freeze"))
 					{	
-						final Player player = Bukkit.getPlayer(args[0]);
-						if(!player.getName().equals(sender.getName()))
+						final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+						if(!offlinePlayer.getName().equals(sender.getName()))
 						{
-							if(playerFrozen.containsKey(player.getUniqueId()))
+							if(playerFrozen.containsKey(offlinePlayer.getUniqueId()))
 							{
 								if(!config.getBoolean("freeze-toggle"))
 								{
-									sendMessage(sender, messages.getStringList("errors.player-already-frozen"), prefix, "{player}", player.getName());
+									sendMessage(sender, messages.getStringList("errors.player-already-frozen"), prefix, "{player}", offlinePlayer.getName());
 									return false;
 								}
-								playerFrozen.remove(player.getUniqueId());
-								SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
-								sendMessage(sender, messages.getStringList("player-unfrozen"), prefix, "{player}", player.getName());
-								sendMessage(player, messages.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
+								playerFrozen.remove(offlinePlayer.getUniqueId());
+								sendMessage(sender, messages.getStringList("player-unfrozen"), prefix, "{player}", offlinePlayer.getName());
+								if (offlinePlayer.isOnline())
+								{
+									final Player player = (Player) offlinePlayer;
+									SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
+									sendMessage(player, messages.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
+								}
 							}
 							else
 							{
@@ -179,12 +184,17 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 								{
 									reason =  messages.getString("no-reason", "No reason");
 								}
-								playerFrozen.put(player.getUniqueId(), new Freeze(sender.getName(), reason, player.getLocation()));
-								SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("freeze-sound"), 1, 1);
-								sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", player.getName()
-																													, "{reason}", reason);
-								sendMessage(sender, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName()
-																												    , "{reason}", reason);
+								final Location playerLocation = offlinePlayer.isOnline() ? offlinePlayer.getPlayer().getLocation() : config.getLocation("control-location");
+								playerFrozen.put(offlinePlayer.getUniqueId(), new Freeze(sender.getName(), reason, playerLocation));
+								sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", offlinePlayer.getName()
+																										, "{reason}", reason);
+								if (offlinePlayer.isOnline())
+								{
+									final Player player = (Player) offlinePlayer;
+									SoundUtils.playPlayerSound(instance, player, playerLocation, config.getString("freeze-sound"), 1, 1);
+									sendMessage(player, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName()
+																											, "{reason}", reason);
+								}
 							}
 						}
 						else
@@ -199,7 +209,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 				}
 				else
 				{
-					sendMessage(sender, messages.getStringList("errors.player-offline"), prefix);
+					sendMessage(sender, messages.getStringList("errors.player-not-played-before"), prefix);
 				}
 			}
 		}

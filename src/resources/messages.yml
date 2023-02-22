@@ -52,8 +52,8 @@ help-page:
 errors:
   self-freeze:
     - "&cYou can't freeze yourself!"
-  player-offline:
-    - "&cThis player is offline!"
+  player-not-played-before:
+    - "&b{player} &chas never played on this server before! You can't freeze him!"
   player-already-frozen:
     - "&b{player} &cis already frozen!"
   player-not-frozen:
