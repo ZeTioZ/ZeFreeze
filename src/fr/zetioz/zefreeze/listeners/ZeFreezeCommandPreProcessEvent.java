@@ -42,19 +42,17 @@ public class ZeFreezeCommandPreProcessEvent implements Listener, FilesManagerUti
 		final String[] args = fullCommand.split(" ");
 		final Player player = event.getPlayer();
 
-		if (args.length > 0)
+		if (args.length > 0
+			&& config.getBoolean("block-commands.enabled")
+			&& !config.getStringList("block-commands.whitelist").contains(args[0])
+			&& instance.getPlayerFrozen().containsKey(player.getUniqueId()))
 		{
-			if(config.getBoolean("block-commands.enabled")
-				&& !config.getStringList("block-commands.whitelist").contains(args[0])
-				&& instance.getPlayerFrozen().containsKey(player.getUniqueId()))
-			{
-				event.setCancelled(true);
-				final Freeze freeze = instance.getPlayerFrozen().get(player.getUniqueId());
-				sendMessage(player, messages.getStringList("errors.blocked-command"), prefix, "{player}", player.getName(),
-						"{reason}", freeze.getReason(),
-						"{freezer}", freeze.getFreezer(),
-						"{command}", fullCommand);
-			}
+			event.setCancelled(true);
+			final Freeze freeze = instance.getPlayerFrozen().get(player.getUniqueId());
+			sendMessage(player, messages.getStringList("errors.blocked-command"), prefix, "{player}", player.getName(),
+					"{reason}", freeze.getReason(),
+					"{freezer}", freeze.getFreezer(),
+					"{command}", fullCommand);
 		}
 	}
 }
