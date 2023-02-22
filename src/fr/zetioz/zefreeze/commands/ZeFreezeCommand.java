@@ -175,15 +175,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 							}
 							else
 							{
-								String reason = "";
-								if(args.length >= 2)
-								{
-									reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-								}
-								else
-								{
-									reason =  messages.getString("no-reason", "No reason");
-								}
+								final String reason = args.length >= 2 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : messages.getString("no-reason", "No reason");
 								final Location playerLocation = offlinePlayer.isOnline() ? offlinePlayer.getPlayer().getLocation() : config.getLocation("control-location");
 								playerFrozen.put(offlinePlayer.getUniqueId(), new Freeze(sender.getName(), reason, playerLocation));
 								sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", offlinePlayer.getName()
@@ -235,15 +227,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 									sendMessage(sender, messages.getStringList("errors.player-not-frozen"), prefix, "{player}", player.getName());
 									return false;
 								}
-								String reason;
-								if(args.length >= 2)
-								{
-									reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
-								}
-								else
-								{
-									reason =  messages.getString("no-reason", "No reason");
-								}
+								final String reason = args.length >= 2 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : messages.getString("no-reason", "No reason");
 								playerFrozen.put(player.getUniqueId(), new Freeze(sender.getName(), reason, player.getLocation()));
 								SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("freeze-sound"), 1, 1);
 								sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", player.getName()
