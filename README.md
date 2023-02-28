@@ -5,8 +5,12 @@ ZeFreeze is a plugin that make possible to freeze a player in place to be able t
 - Play a sound when freezing/unfreezing a player
 - Add an action when the player leave the server while being frozen
 - Remove the freezing state when the player leave the server
+- Freeze offline players that have played at least once on the server
+- Anti-disconnection GUI to avoid players from disconnecting using the game menu
+- Block commands while the player is frozen with a possible whitelist
 - Permission support
 - Fully customizable with configs and messages files
+- Pretty much every function can be toggled on or off
 - Optimized and lag free 
 
 ### How to install
@@ -81,6 +85,8 @@ ZeFreeze is a plugin that make possible to freeze a player in place to be able t
 	errors:
 	  self-freeze:
 	    - "&cYou can't freeze yourself!"
+	  close-anti-disconnection-gui:
+	    - "&cYou can't close thi GUI because you are frozen!"
 	  player-offline:
 	    - "&cThis player is offline!"
 	  player-already-frozen:
@@ -112,10 +118,15 @@ ZeFreeze is a plugin that make possible to freeze a player in place to be able t
 
 	# Allow the console to make a command when a player leave the server while he is frozen
 	disconnect-action:
-	enabled: true
-	commands:
-	  - "money set {player} 0"
-	  - "ban {player} {reason}"
+	  enabled: true
+	  commands:
+	    - "money set {player} 0"
+	    - "ban {player} {reason}"
+	
+	# Block the player from making commands when he is frozen
+	block-commands:
+	  enabled: true
+	  whitelist: []
 	
 	# Unfreeze the player if he disconnect while being frozen
 	unfreeze-on-disconnect: true
@@ -131,10 +142,10 @@ ZeFreeze is a plugin that make possible to freeze a player in place to be able t
 	
 	# You can find all the available sound here https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
 	# Sound played when the target is freezed
-	freeze-sound: GHAST_SCREAM
+	freeze-sound: ENTITY_GHAST_SCREAM
 	
 	# Sound played when the target is unfreezed
-	unfreeze-sound: PIG_DEATH
+	unfreeze-sound: ENTITY_PIG_DEATH
 	
 	# Disable the interaction of a frozen player
 	disable-interaction: true
@@ -148,6 +159,36 @@ ZeFreeze is a plugin that make possible to freeze a player in place to be able t
 	# Disable the possibility to break block from a frozen player
 	disable-block-break: true
 	
+	anti-disconnection-gui:
+	  enabled: true
+	  size: 27
+	  title: "&c&lYou are frozen!"
+	  background:
+	    enabled: true
+	    material: BARRIER
+	    name: "&c&lYou are frozen!"
+	    lore: []
+	    model: 0
+	  border:
+	    enabled: true
+	    material: BLACK_STAINED_GLASS_PANE
+	    name: "&c&lYou are frozen!"
+	    lore: []
+	    model: 0
+      items:
+	    first-item:
+	      slot: 11
+	      material: REDSTONE_BLOCK
+	      name: "&c&lYou are frozen!"
+	      lore: []
+	      model: 0
+        second-item:
+	      slot: 15
+          material: REDSTONE_BLOCK
+	      name: "&c&lYou are frozen!"
+	      lore: []
+	      model: 0
+
 	control-location:
 </details>
 
@@ -170,8 +211,9 @@ ZeFreeze is a plugin that make possible to freeze a player in place to be able t
 	- Add a "/freeze info" command to know the reason of the player's freeze (Added - 0.1.2)
 	- Add a location to teleport both the player and the staff member to a specific spot for control (0.2.0)
 	- Add No PvP and No Block Break on freeze (0.3.0)
-	- Add an anti-disconnect screen and an item saying what the player has to do (In Progress)
 	- Tab completion support for the commands (1.0.0)
+	- Block commands while frozen with a possible whitelist (1.1.0)
+	- Add an anti-disconnection GUI and an item saying what the player has to do (1.2.0)
 </details>
 
 Need support ? Feel free to contact me on discord! [Click here to join the discord](https://discord.gg/93yXste)!
