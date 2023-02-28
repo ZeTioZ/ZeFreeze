@@ -24,10 +24,10 @@ freeze-message-cooldown: 5
 
 # You can find all the available sound here https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
 # Sound played when the target is freezed
-freeze-sound: GHAST_SCREAM
+freeze-sound: ENTITY_GHAST_SCREAM
 
 # Sound played when the target is unfreezed
-unfreeze-sound: PIG_DEATH
+unfreeze-sound: ENTITY_PIG_DEATH
 
 # Disable the interaction of a frozen player
 disable-interaction: true
@@ -40,5 +40,36 @@ disable-block-place: true
 
 # Disable the possibility to break block from a frozen player
 disable-block-break: true
+
+anti-disconnection-gui:
+  enabled: true
+  size: 27
+  title: "&c&lYou are frozen!"
+  background:
+    enabled: true
+    material: BARRIER
+    name: "&c&lYou are frozen!"
+    lore: []
+    model: 0
+  border:
+    enabled: true
+    material: BLACK_STAINED_GLASS_PANE
+    name: "&c&lYou are frozen!"
+    lore: []
+    model: 0
+  items:
+    first-item:
+      slot: 11
+      material: REDSTONE_BLOCK
+      name: "&c&lYou are frozen!"
+      lore: []
+      model: 0
+    second-item:
+      slot: 15
+      material: REDSTONE_BLOCK
+      name: "&c&lYou are frozen!"
+      lore: []
+      model: 0
+
 
 control-location:

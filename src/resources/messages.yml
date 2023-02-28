@@ -52,6 +52,8 @@ help-page:
 errors:
   self-freeze:
     - "&cYou can't freeze yourself!"
+  close-anti-disconnection-gui:
+    - "&cYou can't close thi GUI because you are frozen!"
   player-not-played-before:
     - "&b{player} &chas never played on this server before! You can't freeze him!"
   player-already-frozen:

@@ -7,6 +7,7 @@ import java.util.*;
 import fr.zetioz.coreutils.FilesManagerUtils;
 import fr.zetioz.coreutils.SoundUtils;
 import fr.zetioz.zefreeze.ZeFreezeMain;
+import fr.zetioz.zefreeze.guis.AntiDisconnectionGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -23,7 +24,8 @@ import static fr.zetioz.coreutils.ColorUtils.sendMessage;
 public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.ReloadableFiles
 {
 
-	private ZeFreezeMain instance;
+	private final ZeFreezeMain instance;
+	private final AntiDisconnectionGUI antiDisconnectionGUI;
 	private YamlConfiguration messages;
 	private YamlConfiguration config;
 	private Map<UUID, Freeze> playerFrozen;
@@ -32,6 +34,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 	public ZeFreezeCommand(ZeFreezeMain instance) throws FileNotFoundException
 	{
 		this.instance = instance;
+		this.antiDisconnectionGUI = new AntiDisconnectionGUI(instance);
 		this.playerFrozen = instance.getPlayerFrozen();
 		instance.getFilesManagerUtils().addReloadable(this);
 		this.reloadFiles();
@@ -99,12 +102,11 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 				}
 				else if(args[0].equalsIgnoreCase("control"))
 				{
-					if(!(sender instanceof Player))
+					if(!(sender instanceof final Player senderPlayer))
 					{
 						sendMessage(sender, messages.getStringList("errors.player-only"), prefix);
 						return true;
 					}
-					final Player senderPlayer = (Player) sender;
 					if(sender.hasPermission("zefreeze.control.set")
 						&& args[1] != null && args[1].equalsIgnoreCase("set"))
 					{
@@ -169,6 +171,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 								if (offlinePlayer.isOnline())
 								{
 									final Player player = (Player) offlinePlayer;
+									player.closeInventory();
 									SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
 									sendMessage(player, messages.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
 								}
@@ -183,6 +186,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 								if (offlinePlayer.isOnline())
 								{
 									final Player player = (Player) offlinePlayer;
+									if(config.getBoolean("anti-disconnection-gui.enabled")) player.openInventory(antiDisconnectionGUI.buildInventory());
 									SoundUtils.playPlayerSound(instance, player, playerLocation, config.getString("freeze-sound"), 1, 1);
 									sendMessage(player, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName()
 																											, "{reason}", reason);
@@ -213,34 +217,44 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 			}
 			else
 			{
-				if(Bukkit.getOfflinePlayer(args[0]).isOnline())
+				if(Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore())
 				{
 					if(sender.hasPermission("zefreeze.unfreeze"))
 					{	
-						final Player player = Bukkit.getPlayer(args[0]);
-						if(!player.getName().equals(sender.getName()))
+						final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+						if(!offlinePlayer.getName().equals(sender.getName()))
 						{
-							if(!playerFrozen.containsKey(player.getUniqueId()))
+							if(!playerFrozen.containsKey(offlinePlayer.getUniqueId()))
 							{
 								if(!config.getBoolean("freeze-toggle"))
 								{
-									sendMessage(sender, messages.getStringList("errors.player-not-frozen"), prefix, "{player}", player.getName());
+									sendMessage(sender, messages.getStringList("errors.player-not-frozen"), prefix, "{player}", offlinePlayer.getName());
 									return false;
 								}
 								final String reason = args.length >= 2 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : messages.getString("no-reason", "No reason");
-								playerFrozen.put(player.getUniqueId(), new Freeze(sender.getName(), reason, player.getLocation()));
-								SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("freeze-sound"), 1, 1);
-								sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", player.getName()
-																												  , "{reason}", reason);
-								sendMessage(sender, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName()
-																												  , "{reason}", reason);
+								final Location playerLocation = offlinePlayer.isOnline() ? offlinePlayer.getPlayer().getLocation() : config.getLocation("control-location");
+								playerFrozen.put(offlinePlayer.getUniqueId(), new Freeze(sender.getName(), reason, playerLocation));
+								sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", offlinePlayer.getName()
+										, "{reason}", reason);
+								if (offlinePlayer.isOnline())
+								{
+									final Player player = (Player) offlinePlayer;
+									if(config.getBoolean("anti-disconnection-gui.enabled")) player.openInventory(antiDisconnectionGUI.buildInventory());
+									SoundUtils.playPlayerSound(instance, player, playerLocation, config.getString("freeze-sound"), 1, 1);
+									sendMessage(player, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName(), "{reason}", reason);
+								}
 							}
 							else
 							{
-								playerFrozen.remove(player.getUniqueId());
-								SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
-								sendMessage(sender, messages.getStringList("player-unfrozen"), prefix, "{player}", player.getName());
-								sendMessage(sender, messages.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
+								playerFrozen.remove(offlinePlayer.getUniqueId());
+								sendMessage(sender, messages.getStringList("player-unfrozen"), prefix, "{player}", offlinePlayer.getName());
+								if (offlinePlayer.isOnline())
+								{
+									final Player player = (Player) offlinePlayer;
+									player.closeInventory();
+									SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
+									sendMessage(player, messages.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
+								}
 							}
 						}
 						else

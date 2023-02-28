@@ -4,7 +4,7 @@
 
   <groupId>fr.zetioz</groupId>
   <artifactId>zefreeze</artifactId>
-  <version>1.1.2</version>
+  <version>1.2.0</version>
   <packaging>jar</packaging>
   <name>ZeFreeze</name>
 
@@ -38,6 +38,12 @@
 		<groupId>fr.zetioz</groupId>
 		<artifactId>CoreUtils</artifactId>
 		<version>1.4.2</version>
+	</dependency>
+
+	<dependency>
+		<groupId>fr.zetioz</groupId>
+		<artifactId>ItemBuilderUtils</artifactId>
+		<version>1.1.0</version>
 	</dependency>
   </dependencies>
 

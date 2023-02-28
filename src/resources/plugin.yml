@@ -1,6 +1,7 @@
 name: ZeFreeze
-version: 1.1.2
+version: 1.2.0
 author: ZeTioZ
+api-version: 1.17
 main: fr.zetioz.zefreeze.ZeFreezeMain
 commands:
   zefreeze:

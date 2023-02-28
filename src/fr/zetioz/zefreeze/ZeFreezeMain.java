@@ -38,7 +38,11 @@ public class ZeFreezeMain extends JavaPlugin
 									, new ZeFreezeBlockBreakEvent(this)
 									, new ZeFreezeBlockPlaceEvent(this)
 									, new ZeFreezePlayerInteractEvent(this)
-									, new ZeFreezeEntityDamageByEntityEvent(this));
+									, new ZeFreezeCommandPreProcessEvent(this)
+									, new ZeFreezeEntityDamageByEntityEvent(this)
+									, new ZeFreezeInventoryClickEvent(this)
+									, new ZeFreezeInventoryCloseEvent(this)
+									, new ZeFreezePlayerJoinEvent(this));
 			getCommand("zefreeze").setExecutor(zeFreezeCommand);
 			getCommand("zeunfreeze").setExecutor(zeFreezeCommand);
 		}

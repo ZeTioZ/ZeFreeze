@@ -44,7 +44,7 @@ public class ZeFreezePlayerQuitEvent implements Listener, FilesManagerUtils.Relo
 	@EventHandler
 	public void onPlayerDisconnect(PlayerQuitEvent e)
 	{
-		Player player = e.getPlayer();
+		final Player player = e.getPlayer();
 		if(playerFrozen.containsKey(player.getUniqueId()))
 		{
 			if(configsFile.getBoolean("disconnect-action.enabled"))
