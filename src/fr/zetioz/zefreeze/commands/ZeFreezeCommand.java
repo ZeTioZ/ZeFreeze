@@ -66,6 +66,11 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 				}
 				else if(args[0].equalsIgnoreCase("info"))
 				{
+					if(args.length < 2)
+					{
+						sendMessage(sender, messages.getStringList("help-page"), prefix);
+						return false;
+					}
 					if(sender.hasPermission("zefreeze.info"))
 					{						
 						final UUID playerUUID = Bukkit.getOfflinePlayer(args[1]).getUniqueId();
@@ -279,20 +284,45 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String msg, String[] args)
 	{
+
 		if (command.getName().equalsIgnoreCase("zefreeze"))
 		{
 			final List<String> firstArgList = new ArrayList<>(List.of("help", "info"));
 			final List<String> completions = new ArrayList<>();
-
-			if(sender.hasPermission("zefreeze.reload")) firstArgList.addAll(List.of("reload", "control", "freeze"));
+			if(sender.hasPermission("zefreeze.reload"))
+			{
+				firstArgList.addAll(List.of("reload", "control"));
+				firstArgList.add(instance.getServer().getOnlinePlayers().stream().map(Player::getName).toList().toString());
+			}
 
 			if (args.length == 1)
 			{
 				StringUtil.copyPartialMatches(args[0], firstArgList, completions);
 			}
+			else if (args.length == 2 && args[0].equalsIgnoreCase("info"))
+			{
+				completions.addAll(instance.getPlayerFrozen().keySet().stream().map(Bukkit::getOfflinePlayer).map(OfflinePlayer::getName).toList());
+			}
 			else if (args.length == 2 && args[0].equalsIgnoreCase("control"))
 			{
 				StringUtil.copyPartialMatches(args[1], List.of("set"), completions);
+			}
+			Collections.sort(completions);
+			return completions;
+		}
+		if (command.getName().equalsIgnoreCase("unzefreeze"))
+		{
+			final List<String> firstArgList = new ArrayList<>();
+			final List<String> completions = new ArrayList<>();
+
+			if(sender.hasPermission("zefreeze.reload"))
+			{
+				firstArgList.add(instance.getServer().getOnlinePlayers().stream().map(Player::getName).toList().toString());
+			}
+
+			if (args.length == 1)
+			{
+				StringUtil.copyPartialMatches(args[0], firstArgList, completions);
 			}
 			Collections.sort(completions);
 			return completions;
