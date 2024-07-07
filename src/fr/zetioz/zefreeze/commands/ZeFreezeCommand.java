@@ -210,7 +210,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 				}
 				else
 				{
-					sendMessage(sender, messages.getStringList("errors.player-not-played-before"), prefix);
+					sendMessage(sender, messages.getStringList("errors.player-not-played-before"), prefix, "{player}", args[0]);
 				}
 			}
 		}
@@ -292,7 +292,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 			if(sender.hasPermission("zefreeze.reload"))
 			{
 				firstArgList.addAll(List.of("reload", "control"));
-				firstArgList.add(instance.getServer().getOnlinePlayers().stream().map(Player::getName).toList().toString());
+				firstArgList.addAll(instance.getServer().getOnlinePlayers().stream().map(Player::getName).toList());
 			}
 
 			if (args.length == 1)
@@ -310,14 +310,14 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 			Collections.sort(completions);
 			return completions;
 		}
-		if (command.getName().equalsIgnoreCase("unzefreeze"))
+		if (command.getName().equalsIgnoreCase("zeunfreeze"))
 		{
 			final List<String> firstArgList = new ArrayList<>();
 			final List<String> completions = new ArrayList<>();
 
 			if(sender.hasPermission("zefreeze.reload"))
 			{
-				firstArgList.add(instance.getServer().getOnlinePlayers().stream().map(Player::getName).toList().toString());
+				firstArgList.addAll(instance.getServer().getOnlinePlayers().stream().map(Player::getName).toList());
 			}
 
 			if (args.length == 1)
