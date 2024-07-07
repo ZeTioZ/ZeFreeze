@@ -21,11 +21,11 @@ ZeFreeze is a plugin that make possible to freeze a player in place to be able t
 
 ### Commands
 - /zefreeze » Display help page of the plugin
-- /zefreeze <player> » Freeze/Unfreeze a player (toggle)
-- /zeunfreeze <player> » Freeze/Unfreeze a player (toggle)
-- /zefreeze control <player> » Teleport a frozen player to the control point
-- /zefreeze control set &c» Set the control point location"
-- /zefreeze info <player> » Info about why a player is frozen
+- /zefreeze \<player\> » Freeze/Unfreeze a player (toggle)
+- /zeunfreeze \<player\> » Freeze/Unfreeze a player (toggle)
+- /zefreeze control \<player\> » Teleport a frozen player to the control point
+- /zefreeze control set » Set the control point location"
+- /zefreeze info \<player\> » Info about why a player is frozen
 - /zefreeze help » Display help page of the plugin
 - /zefreeze reload » Reload the plugin
 
@@ -193,11 +193,11 @@ ZeFreeze is a plugin that make possible to freeze a player in place to be able t
 </details>
 
 ### Permissions
-- zefreeze.freeze (/zefreeze <player>)
-- zefreeze.unfreeze (/zeunfreeze <player>)
-- zefreeze.info (/zefreeze info <player>)
+- zefreeze.freeze (/zefreeze \<player\>)
+- zefreeze.unfreeze (/zeunfreeze \<player\>)
+- zefreeze.info (/zefreeze info \<player\>)
 - zefreeze.control.set (/zefreeze control set)
-- zefreeze.control (/zefreeze control <player>)
+- zefreeze.control (/zefreeze control \<player\>)
 - zefreeze.reload (/zefreeze reload)
 
 <details>
