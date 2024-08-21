@@ -157,50 +157,21 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 					sendMessage(sender, messages.getStringList("errors.not-enough-permissions"), prefix);
 					return true;
 				}
-				else if(Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore())
+				else if(args[0].equalsIgnoreCase("@a") || args[0].equalsIgnoreCase("all") || Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore())
 				{
 					if(sender.hasPermission("zefreeze.freeze"))
-					{	
-						final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
-						if(!offlinePlayer.getName().equals(sender.getName()))
+					{
+						if(args[0].equalsIgnoreCase("@a") || args[0].equalsIgnoreCase("all"))
 						{
-							if(playerFrozen.containsKey(offlinePlayer.getUniqueId()))
+							for(Player player : Bukkit.getOnlinePlayers().stream().filter(player -> !player.getName().equals(sender.getName())).toList())
 							{
-								if(!config.getBoolean("freeze-toggle"))
-								{
-									sendMessage(sender, messages.getStringList("errors.player-already-frozen"), prefix, "{player}", offlinePlayer.getName());
-									return false;
-								}
-								playerFrozen.remove(offlinePlayer.getUniqueId());
-								sendMessage(sender, messages.getStringList("player-unfrozen"), prefix, "{player}", offlinePlayer.getName());
-								if (offlinePlayer.isOnline())
-								{
-									final Player player = (Player) offlinePlayer;
-									player.closeInventory();
-									SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
-									sendMessage(player, messages.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
-								}
-							}
-							else
-							{
-								final String reason = args.length >= 2 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : messages.getString("no-reason", "No reason");
-								final Location playerLocation = offlinePlayer.isOnline() ? offlinePlayer.getPlayer().getLocation() : config.getLocation("control-location");
-								playerFrozen.put(offlinePlayer.getUniqueId(), new Freeze(sender.getName(), reason, playerLocation));
-								sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", offlinePlayer.getName()
-																										, "{reason}", reason);
-								if (offlinePlayer.isOnline())
-								{
-									final Player player = (Player) offlinePlayer;
-									if(config.getBoolean("anti-disconnection-gui.enabled")) player.openInventory(antiDisconnectionGUI.buildInventory());
-									SoundUtils.playPlayerSound(instance, player, playerLocation, config.getString("freeze-sound"), 1, 1);
-									sendMessage(player, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName()
-																											, "{reason}", reason);
-								}
+								return toggleFreeze(sender, args, player);
 							}
 						}
 						else
 						{
-							sendMessage(sender, messages.getStringList("errors.self-freeze"), prefix);
+							final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+							return toggleFreeze(sender, args, offlinePlayer);
 						}
 					}
 					else
@@ -225,46 +196,18 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 				if(Bukkit.getOfflinePlayer(args[0]).hasPlayedBefore())
 				{
 					if(sender.hasPermission("zefreeze.unfreeze"))
-					{	
-						final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
-						if(!offlinePlayer.getName().equals(sender.getName()))
+					{
+						if(args[0].equalsIgnoreCase("@a") || args[0].equalsIgnoreCase("all"))
 						{
-							if(!playerFrozen.containsKey(offlinePlayer.getUniqueId()))
+							for(Player player : Bukkit.getOnlinePlayers().stream().filter(player -> !player.getName().equals(sender.getName())).toList())
 							{
-								if(!config.getBoolean("freeze-toggle"))
-								{
-									sendMessage(sender, messages.getStringList("errors.player-not-frozen"), prefix, "{player}", offlinePlayer.getName());
-									return false;
-								}
-								final String reason = args.length >= 2 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : messages.getString("no-reason", "No reason");
-								final Location playerLocation = offlinePlayer.isOnline() ? offlinePlayer.getPlayer().getLocation() : config.getLocation("control-location");
-								playerFrozen.put(offlinePlayer.getUniqueId(), new Freeze(sender.getName(), reason, playerLocation));
-								sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", offlinePlayer.getName()
-										, "{reason}", reason);
-								if (offlinePlayer.isOnline())
-								{
-									final Player player = (Player) offlinePlayer;
-									if(config.getBoolean("anti-disconnection-gui.enabled")) player.openInventory(antiDisconnectionGUI.buildInventory());
-									SoundUtils.playPlayerSound(instance, player, playerLocation, config.getString("freeze-sound"), 1, 1);
-									sendMessage(player, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName(), "{reason}", reason);
-								}
-							}
-							else
-							{
-								playerFrozen.remove(offlinePlayer.getUniqueId());
-								sendMessage(sender, messages.getStringList("player-unfrozen"), prefix, "{player}", offlinePlayer.getName());
-								if (offlinePlayer.isOnline())
-								{
-									final Player player = (Player) offlinePlayer;
-									player.closeInventory();
-									SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
-									sendMessage(player, messages.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
-								}
+								return toggleFreeze(sender, args, player);
 							}
 						}
 						else
 						{
-							sendMessage(sender, messages.getStringList("errors.self-freeze"), prefix);
+							final OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
+							return toggleFreeze(sender, args, offlinePlayer);
 						}
 					}
 					else
@@ -281,6 +224,51 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 		return false;
 	}
 
+	private boolean toggleFreeze(CommandSender sender, String[] args, OfflinePlayer offlinePlayer)
+	{
+		if(!offlinePlayer.getName().equals(sender.getName()))
+		{
+			if(playerFrozen.containsKey(offlinePlayer.getUniqueId()))
+			{
+				if(!config.getBoolean("freeze-toggle"))
+				{
+					sendMessage(sender, messages.getStringList("errors.player-already-frozen"), prefix, "{player}", offlinePlayer.getName());
+					return true;
+				}
+				playerFrozen.remove(offlinePlayer.getUniqueId());
+				sendMessage(sender, messages.getStringList("player-unfrozen"), prefix, "{player}", offlinePlayer.getName());
+				if (offlinePlayer.isOnline())
+				{
+					final Player player = (Player) offlinePlayer;
+					player.closeInventory();
+					SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
+					sendMessage(player, messages.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
+				}
+			}
+			else
+			{
+				final String reason = args.length >= 2 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : messages.getString("no-reason", "No reason");
+				final Location playerLocation = offlinePlayer.isOnline() ? offlinePlayer.getPlayer().getLocation() : config.getLocation("control-location");
+				playerFrozen.put(offlinePlayer.getUniqueId(), new Freeze(sender.getName(), reason, playerLocation));
+				sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", offlinePlayer.getName()
+																						, "{reason}", reason);
+				if (offlinePlayer.isOnline())
+				{
+					final Player player = (Player) offlinePlayer;
+					if(config.getBoolean("anti-disconnection-gui.enabled")) player.openInventory(antiDisconnectionGUI.buildInventory());
+					SoundUtils.playPlayerSound(instance, player, playerLocation, config.getString("freeze-sound"), 1, 1);
+					sendMessage(player, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName()
+																							, "{reason}", reason);
+				}
+			}
+		}
+		else
+		{
+			sendMessage(sender, messages.getStringList("errors.self-freeze"), prefix);
+		}
+		return false;
+	}
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String msg, String[] args)
 	{
@@ -291,7 +279,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 			final List<String> completions = new ArrayList<>();
 			if(sender.hasPermission("zefreeze.reload"))
 			{
-				firstArgList.addAll(List.of("reload", "control"));
+				firstArgList.addAll(List.of("reload", "control", "@a", "all"));
 				firstArgList.addAll(instance.getServer().getOnlinePlayers().stream().map(Player::getName).toList());
 			}
 
@@ -317,6 +305,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 
 			if(sender.hasPermission("zefreeze.reload"))
 			{
+				firstArgList.addAll(List.of("@a", "all"));
 				firstArgList.addAll(instance.getServer().getOnlinePlayers().stream().map(Player::getName).toList());
 			}
 
