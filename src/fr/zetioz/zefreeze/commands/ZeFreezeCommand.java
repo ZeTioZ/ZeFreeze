@@ -165,8 +165,9 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 						{
 							for(Player player : Bukkit.getOnlinePlayers().stream().filter(player -> !player.getName().equals(sender.getName())).toList())
 							{
-								return toggleFreeze(sender, args, player);
+								toggleFreeze(sender, args, player);
 							}
+							return true;
 						}
 						else
 						{
@@ -201,8 +202,9 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 						{
 							for(Player player : Bukkit.getOnlinePlayers().stream().filter(player -> !player.getName().equals(sender.getName())).toList())
 							{
-								return toggleFreeze(sender, args, player);
+								toggleFreeze(sender, args, player);
 							}
+							return true;
 						}
 						else
 						{
