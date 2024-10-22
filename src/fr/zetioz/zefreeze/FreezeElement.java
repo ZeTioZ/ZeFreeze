@@ -1,16 +1,16 @@
-package fr.zetioz.zefreeze.object;
+package fr.zetioz.zefreeze;
 
 import org.bukkit.Location;
 
 import static fr.zetioz.coreutils.ColorUtils.color;
 
-public class Freeze {
+public class FreezeElement {
 	
 	private String freezer;
 	private String reason;
 	private Location location;
 	
-	public Freeze(String freezer, String reason, Location location)
+	public FreezeElement(String freezer, String reason, Location location)
 	{
 		this.freezer = freezer;
 		this.reason = color(reason);
