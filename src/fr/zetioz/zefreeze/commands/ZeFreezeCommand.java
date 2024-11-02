@@ -4,7 +4,7 @@ import fr.zetioz.coreutils.FilesManagerUtils;
 import fr.zetioz.coreutils.SoundUtils;
 import fr.zetioz.zefreeze.FreezeElement;
 import fr.zetioz.zefreeze.ZeFreezePlugin;
-import fr.zetioz.zefreeze.gui.AntiDisconnectionGUI;
+import fr.zetioz.zefreeze.guis.AntiDisconnectionGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -77,7 +77,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
                 handleFreezeAllCommand(sender, args);
                 yield true;
             }
-            default -> handleFreezeUnfreezeCommand(sender, cmd, args);
+            default -> handleUnfreezeCommand(sender, args);
         };
     }
 
@@ -180,7 +180,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
                 .forEach(player -> toggleFreeze(sender, args, player));
     }
 
-    private boolean handleFreezeUnfreezeCommand(CommandSender sender, Command cmd, String[] args) {
+    private boolean handleUnfreezeCommand(CommandSender sender, String[] args) {
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
 
         if (!offlinePlayer.hasPlayedBefore()) {

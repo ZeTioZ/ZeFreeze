@@ -1,9 +1,9 @@
-package fr.zetioz.zefreeze.listener;
+package fr.zetioz.zefreeze.listeners;
 
 import fr.zetioz.coreutils.FilesManagerUtils;
 import fr.zetioz.zefreeze.FreezeElement;
 import fr.zetioz.zefreeze.ZeFreezePlugin;
-import fr.zetioz.zefreeze.gui.AntiDisconnectionGUI;
+import fr.zetioz.zefreeze.guis.AntiDisconnectionGUI;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

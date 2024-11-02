@@ -1,4 +1,4 @@
-package fr.zetioz.zefreeze.gui;
+package fr.zetioz.zefreeze.guis;
 
 import fr.zetioz.coreutils.FilesManagerUtils;
 import fr.zetioz.coreutils.MaterialUtils;

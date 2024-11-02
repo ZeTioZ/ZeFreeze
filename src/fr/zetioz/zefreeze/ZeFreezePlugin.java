@@ -2,7 +2,7 @@ package fr.zetioz.zefreeze;
 
 import fr.zetioz.coreutils.FilesManagerUtils;
 import fr.zetioz.zefreeze.commands.ZeFreezeCommand;
-import fr.zetioz.zefreeze.listener.*;
+import fr.zetioz.zefreeze.listeners.*;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -14,13 +14,11 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ZeFreezePlugin extends JavaPlugin {
-    private Plugin plugin;
     private FilesManagerUtils filesManagerUtils;
     private Map<UUID, FreezeElement> playerFrozen;
 
     @Override
     public void onEnable() {
-        this.plugin = this;
         this.filesManagerUtils = new FilesManagerUtils(this);
         filesManagerUtils.createSimpleYaml("config");
         filesManagerUtils.createSimpleYaml("messages");

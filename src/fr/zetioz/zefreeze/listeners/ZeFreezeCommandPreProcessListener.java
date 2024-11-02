@@ -1,4 +1,4 @@
-package fr.zetioz.zefreeze.listener;
+package fr.zetioz.zefreeze.listeners;
 
 import fr.zetioz.coreutils.FilesManagerUtils;
 import fr.zetioz.zefreeze.FreezeElement;
