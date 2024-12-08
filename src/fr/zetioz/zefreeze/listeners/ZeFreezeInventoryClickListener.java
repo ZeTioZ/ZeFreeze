@@ -10,20 +10,20 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import java.util.UUID;
 
 public class ZeFreezeInventoryClickListener implements Listener {
-    private final ZeFreezePlugin instance;
+	private final ZeFreezePlugin instance;
 
-    public ZeFreezeInventoryClickListener(ZeFreezePlugin instance) {
-        this.instance = instance;
-    }
+	public ZeFreezeInventoryClickListener(ZeFreezePlugin instance) {
+		this.instance = instance;
+	}
 
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event) {
-        if (!(event.getWhoClicked() instanceof final Player player)) return;
+	@EventHandler
+	public void onInventoryClick(InventoryClickEvent event) {
+		if (!(event.getWhoClicked() instanceof final Player player)) return;
 
-        final UUID playerUUID = player.getUniqueId();
-        if (!(event.getView().getTopInventory().getHolder() instanceof AntiDisconnectionGUI)
-                || !instance.getPlayerFrozen().containsKey(playerUUID)) return;
+		final UUID playerUUID = player.getUniqueId();
+		if (!(event.getView().getTopInventory().getHolder() instanceof AntiDisconnectionGUI)
+				|| !instance.getPlayerFrozen().containsKey(playerUUID)) return;
 
-        event.setCancelled(true);
-    }
+		event.setCancelled(true);
+	}
 }

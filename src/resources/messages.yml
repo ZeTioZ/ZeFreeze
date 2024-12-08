@@ -62,6 +62,8 @@ errors:
     - "&b{player} &cis not frozen!"
   damaged-a-frozen-player:
     - "&cThis player is frozen, you can't damage him!"
+  chat-while-frozen:
+    - "&cYou can't chat while frozen!"
   damage-while-frozen:
     - "&cYou can't damage an entity while being frozen!"
   place-while-frozen:

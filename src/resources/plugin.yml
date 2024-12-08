@@ -1,5 +1,5 @@
 name: ZeFreeze
-version: 1.2.0
+version: ${project.version}
 author: ZeTioZ
 api-version: 1.17
 main: fr.zetioz.zefreeze.ZeFreezePlugin

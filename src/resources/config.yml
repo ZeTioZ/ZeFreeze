@@ -41,6 +41,9 @@ disable-block-place: true
 # Disable the possibility to break block from a frozen player
 disable-block-break: true
 
+# Disable the possibility to chat of a frozen player
+disable-chat: false
+
 anti-disconnection-gui:
   enabled: true
   size: 27
