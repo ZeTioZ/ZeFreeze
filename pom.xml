@@ -4,7 +4,7 @@
 
   <groupId>fr.zetioz</groupId>
   <artifactId>zefreeze</artifactId>
-  <version>1.4.0</version>
+  <version>1.4.1</version>
   <packaging>jar</packaging>
   <name>ZeFreeze</name>
 
@@ -17,7 +17,7 @@
   <repositories>
 	<repository>
 	  <id>ZeTioZ-Repo</id>
-	  <url>https://nexus.donatog.live/repository/maven-public/</url>
+	  <url>https://nexus.donatog.eu/repository/maven-public/</url>
 	</repository>
 
     <repository>
@@ -37,7 +37,7 @@
 	<dependency>
 		<groupId>fr.zetioz</groupId>
 		<artifactId>CoreUtils</artifactId>
-		<version>1.4.2</version>
+		<version>1.4.3</version>
 	</dependency>
 
 	<dependency>
