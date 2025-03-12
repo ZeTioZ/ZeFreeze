@@ -10,3 +10,5 @@ target/
 .idea/
 ZeFreeze.iml
 /.idea/
+
+.qodo
