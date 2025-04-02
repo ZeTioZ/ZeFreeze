@@ -44,6 +44,11 @@ disable-block-break: true
 # Disable the possibility to chat of a frozen player
 disable-chat: false
 
+# You can find all the available effects here https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html
+# Effects given to the player when frozen
+freeze-effects:
+  - BLINDNESS
+
 anti-disconnection-gui:
   enabled: true
   size: 27
