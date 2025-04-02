@@ -13,6 +13,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.StringUtil;
 
 import java.io.FileNotFoundException;
@@ -255,6 +257,14 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 			return;
 		}
 
+		config.getStringList("freeze-effects").forEach(effect -> {
+			if(PotionEffectType.getByName(effect) != null){
+				((Player)offlinePlayer).removePotionEffect(Objects.requireNonNull(PotionEffectType.getByName(effect)));
+			} else {
+				instance.getLogger().severe(String.format("The potion %s doesn't exist! Please, change it...", effect));
+			}
+		});
+
 		Player player = (Player) offlinePlayer;
 		player.closeInventory();
 		SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
@@ -280,7 +290,14 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 		{
 			player.openInventory(antiDisconnectionGUI.buildInventory());
 		}
-
+		config.getStringList("freeze-effects").forEach(effect -> {
+			if(PotionEffectType.getByName(effect) != null){
+				PotionEffect potionEffect = PotionEffectType.getByName(effect).createEffect(Integer.MAX_VALUE, 0);
+				player.addPotionEffect(potionEffect);
+			} else {
+				instance.getLogger().severe(String.format("The potion %s doesn't exist! Please, change it...", effect));
+			}
+		});
 		SoundUtils.playPlayerSound(instance, player, location, config.getString("freeze-sound"), 1, 1);
 		sendMessage(player, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName(), "{reason}", reason);
 	}
