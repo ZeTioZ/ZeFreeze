@@ -1,13 +1,11 @@
 package fr.zetioz.zefreeze.commands;
 
-import fr.zetioz.coreutils.EnumCheckUtils;
 import fr.zetioz.coreutils.FilesManagerUtils;
 import fr.zetioz.coreutils.SoundUtils;
 import fr.zetioz.zefreeze.FreezeElement;
 import fr.zetioz.zefreeze.ZeFreezePlugin;
 import fr.zetioz.zefreeze.guis.AntiDisconnectionGUI;
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
