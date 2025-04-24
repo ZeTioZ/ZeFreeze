@@ -36,7 +36,7 @@ public class ZeFreezePlayerInteractListener implements Listener, FilesManagerUti
 		final Player player = event.getPlayer();
 
 		if (!instance.getPlayerFrozen().containsKey(player.getUniqueId())
-				|| config.getBoolean("disable-interaction", false)) return;
+				|| !config.getBoolean("disable-interaction", false)) return;
 
 		event.setCancelled(true);
 		sendMessage(player, messages.getStringList("errors.interact-while-frozen"), prefix);

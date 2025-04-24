@@ -33,15 +33,16 @@ public class ZeFreezeEntityDamageByEntityListener implements Listener, FilesMana
 
 	@EventHandler
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		if (event.getEntity() instanceof final Player victim
-				&& event.getDamager() instanceof final Player damager) {
-
-			if (!(instance.getPlayerFrozen().containsKey(victim.getUniqueId())
-					|| !config.getBoolean("disable-damages", false))) return;
+		if (event.getEntity() instanceof final Player victim)
+		{
+			if (!instance.getPlayerFrozen().containsKey(victim.getUniqueId())
+					|| !config.getBoolean("disable-damages", false)) return;
 
 			event.setCancelled(true);
-			sendMessage(damager, messages.getStringList("errors.damaged-a-frozen-player"), prefix);
-
+			if(event.getDamager() instanceof final Player damager)
+			{
+				sendMessage(damager, messages.getStringList("errors.damaged-a-frozen-player"), prefix);
+			}
 			return;
 		}
 
