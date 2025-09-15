@@ -64,31 +64,34 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 			return true;
 		}
 
-		return switch(args[0].toLowerCase())
+		switch(args[0].toLowerCase())
 		{
 			case "info" ->
 			{
 				handleInfoCommand(sender, args);
-				yield true;
 			}
 			case "reload" ->
 			{
 				handleReloadCommand(sender);
-				yield true;
 			}
 			case "control" ->
 			{
 				handleControlCommand(sender, args);
-				yield true;
 			}
 			case "@a", "all" ->
 			{
-				handleFreezeAllCommand(sender, args);
-				yield true;
+				handleFreezeAllCommand(cmd, sender, args);
+			}
+			case "radius" ->
+			{
+				handleRadiusCommand(cmd, sender, args);
 			}
 			default ->
-				handleUnfreezeCommand(sender, args);
-		};
+			{
+				handleUnfreezeCommand(cmd, sender, args);
+			}
+		}
+		return true;
 	}
 
 	private void handleInfoCommand(CommandSender sender, String[] args)
@@ -157,9 +160,9 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 	private void saveControlLocation(Player player)
 	{
 		config.set("control-location.world", player.getLocation().getWorld().getName());
-		config.set("control-location.x", player.getLocation().getBlockX());
-		config.set("control-location.y", player.getLocation().getBlockY());
-		config.set("control-location.z", player.getLocation().getBlockZ());
+		config.set("control-location.x", Optional.of(player.getLocation().getBlockX()));
+		config.set("control-location.y", Optional.of(player.getLocation().getBlockY()));
+		config.set("control-location.z", Optional.of(player.getLocation().getBlockZ()));
 		instance.getFilesManagerUtils().saveSimpleYaml("config");
 	}
 
@@ -191,7 +194,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 		((Player) sender).teleport(controlLocation);
 	}
 
-	private void handleFreezeAllCommand(CommandSender sender, String[] args)
+	private void handleFreezeAllCommand(Command cmd, CommandSender sender, String[] args)
 	{
 		if(!sender.hasPermission("zefreeze.freeze"))
 		{
@@ -199,15 +202,15 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 			return;
 		}
 
-		Bukkit.getOnlinePlayers().stream().filter(player -> !player.getName().equals(sender.getName())).forEach(player -> toggleFreeze(sender, args, player));
+		Bukkit.getOnlinePlayers().stream().filter(player -> !player.getName().equals(sender.getName())).forEach(player -> toggleFreeze(cmd, sender, args, player));
 	}
 
-	private boolean handleUnfreezeCommand(CommandSender sender, String[] args)
+	private void handleUnfreezeCommand(Command cmd, CommandSender sender, String[] args)
 	{
 		if(!sender.hasPermission("zefreeze.freeze") && !sender.hasPermission("zefreeze.unfreeze"))
 		{
 			sendMessage(sender, messages.getStringList("errors.not-enough-permissions"), prefix);
-			return true;
+			return;
 		}
 
 		OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
@@ -215,18 +218,49 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 		if(!offlinePlayer.hasPlayedBefore())
 		{
 			sendMessage(sender, messages.getStringList("errors.player-not-played-before"), prefix, "{player}", args[0]);
-			return true;
+			return;
 		}
 
-		return toggleFreeze(sender, args, offlinePlayer);
+		toggleFreeze(cmd, sender, args, offlinePlayer);
 	}
 
-	private boolean toggleFreeze(CommandSender sender, String[] args, OfflinePlayer offlinePlayer)
+	private void handleRadiusCommand(Command cmd, CommandSender sender, String[] args)
+	{
+		if(!sender.hasPermission("zefreeze.freeze"))
+		{
+			sendMessage(sender, messages.getStringList("errors.not-enough-permissions"), prefix);
+			return;
+		}
+
+		if(!(sender instanceof Player player))
+		{
+			sendMessage(sender, messages.getStringList("errors.player-only"), prefix);
+			return;
+		}
+
+		if(args.length < 2)
+		{
+			sendMessage(sender, messages.getStringList("errors.radius-not-specified"), prefix);
+			return;
+		}
+
+		try
+		{
+			final double radius = Double.parseDouble(args[1]);
+			Bukkit.getOnlinePlayers().stream().filter(p -> !p.getName().equals(sender.getName()) && p.getLocation().distance(player.getLocation()) <= radius).forEach(p -> toggleFreeze(cmd, sender, args, p));
+		}
+		catch(NumberFormatException e)
+		{
+			sendMessage(sender, messages.getStringList("errors.invalid-radius"), prefix);
+		}
+	}
+
+	private void toggleFreeze(Command cmd, CommandSender sender, String[] args, OfflinePlayer offlinePlayer)
 	{
 		if(offlinePlayer.getName().equals(sender.getName()))
 		{
 			sendMessage(sender, messages.getStringList("errors.self-freeze"), prefix);
-			return true;
+			return;
 		}
 
 		UUID playerUUID = offlinePlayer.getUniqueId();
@@ -234,17 +268,16 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 		if(!playerFrozen.containsKey(playerUUID))
 		{
 			freezePlayer(sender, args, offlinePlayer);
-			return true;
+			return;
 		}
 
-		if(!config.getBoolean("freeze-toggle"))
+		if(!config.getBoolean("freeze-toggle") && cmd.getName().equalsIgnoreCase("zefreeze"))
 		{
 			sendMessage(sender, messages.getStringList("errors.player-already-frozen"), prefix, "{player}", offlinePlayer.getName());
-			return true;
+			return;
 		}
 
 		unfreezePlayer(sender, offlinePlayer);
-		return true;
 	}
 
 	private void unfreezePlayer(CommandSender sender, OfflinePlayer offlinePlayer)
@@ -310,7 +343,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 
 		if(sender.hasPermission("zefreeze.reload"))
 		{
-			options.addAll(List.of("reload", "control", "@a", "all"));
+			options.addAll(List.of("reload", "control", "@a", "all", "radius"));
 			options.addAll(instance.getServer().getOnlinePlayers().stream().map(Player::getName).toList());
 		}
 
