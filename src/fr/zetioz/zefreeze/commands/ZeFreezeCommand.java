@@ -309,6 +309,12 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 		String reason = args.length >= 2 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : messages.getString("no-reason", "No reason");
 		Location location = offlinePlayer.isOnline() ? offlinePlayer.getPlayer().getLocation() : config.getLocation("control-location");
 
+		if(offlinePlayer.isOnline() && Objects.requireNonNull(offlinePlayer.getPlayer()).hasPermission("zefreeze.bypass"))
+		{
+			sendMessage(sender, messages.getStringList("errors.cant-freeze-player"), prefix, "{player}", offlinePlayer.getName());
+			return;
+		}
+
 		playerFrozen.put(offlinePlayer.getUniqueId(), new FreezeElement(sender.getName(), reason, location));
 		sendMessage(sender, messages.getStringList("player-frozen"), prefix, "{player}", offlinePlayer.getName(), "{reason}", reason);
 

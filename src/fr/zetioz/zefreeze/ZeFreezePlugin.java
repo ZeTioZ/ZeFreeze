@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class ZeFreezePlugin extends JavaPlugin {
 	private FilesManagerUtils filesManagerUtils;
@@ -44,7 +45,7 @@ public class ZeFreezePlugin extends JavaPlugin {
 			getCommand("zefreeze").setExecutor(zeFreezeCommand);
 			getCommand("zeunfreeze").setExecutor(zeFreezeCommand);
 		} catch (FileNotFoundException exception) {
-			exception.printStackTrace();
+			getLogger().log(Level.SEVERE, "File not found!", exception);
 		}
 	}
 

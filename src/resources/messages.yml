@@ -50,6 +50,8 @@ help-page:
   - "&2&m=====&r &dZe&bFreeze &c- &d&lInfo &2&m=====&r"
   
 errors:
+  cant-freeze-player:
+    - "&cYou can't freeze &b{player}&c! He is too powerful for you!"
   self-freeze:
     - "&cYou can't freeze yourself!"
   close-anti-disconnection-gui:
