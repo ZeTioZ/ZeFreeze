@@ -11,12 +11,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.logging.Level;
 
 public class ZeFreezePlugin extends JavaPlugin {
 	private FilesManagerUtils filesManagerUtils;
 	private Map<UUID, FreezeElement> playerFrozen;
+	private java.util.Set<UUID> pendingEffectRemoval;
 
 	@Override
 	public void onEnable() {
@@ -25,6 +27,7 @@ public class ZeFreezePlugin extends JavaPlugin {
 		filesManagerUtils.createSimpleYaml("messages");
 
 		playerFrozen = new HashMap<>();
+		pendingEffectRemoval = new java.util.HashSet<>();
 
 		try {
 			final ZeFreezeCommand zeFreezeCommand = new ZeFreezeCommand(this);
@@ -42,8 +45,8 @@ public class ZeFreezePlugin extends JavaPlugin {
 					new ZeFreezeChatListener(this)
 			);
 
-			getCommand("zefreeze").setExecutor(zeFreezeCommand);
-			getCommand("zeunfreeze").setExecutor(zeFreezeCommand);
+			Objects.requireNonNull(getCommand("zefreeze")).setExecutor(zeFreezeCommand);
+			Objects.requireNonNull(getCommand("zeunfreeze")).setExecutor(zeFreezeCommand);
 		} catch (FileNotFoundException exception) {
 			getLogger().log(Level.SEVERE, "File not found!", exception);
 		}
@@ -65,5 +68,9 @@ public class ZeFreezePlugin extends JavaPlugin {
 
 	public Map<UUID, FreezeElement> getPlayerFrozen() {
 		return playerFrozen;
+	}
+
+	public java.util.Set<UUID> getPendingEffectRemoval() {
+		return pendingEffectRemoval;
 	}
 }

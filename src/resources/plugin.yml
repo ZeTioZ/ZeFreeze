@@ -1,7 +1,7 @@
 name: ZeFreeze
 version: ${project.version}
 author: ZeTioZ
-api-version: 1.17
+api-version: 1.21
 main: fr.zetioz.zefreeze.ZeFreezePlugin
 commands:
   zefreeze:

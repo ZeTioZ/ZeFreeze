@@ -18,7 +18,7 @@ import static fr.zetioz.coreutils.ColorUtils.*;
 
 public class ZeFreezePlayerQuitListener implements Listener, FilesManagerUtils.ReloadableFiles {
 	private final ZeFreezePlugin instance;
-	private Map<UUID, FreezeElement> playerFrozen;
+	private final Map<UUID, FreezeElement> playerFrozen;
 	private YamlConfiguration messagesFile;
 	private YamlConfiguration configsFile;
 	private String prefix;
@@ -44,6 +44,7 @@ public class ZeFreezePlayerQuitListener implements Listener, FilesManagerUtils.R
 
 		if (configsFile.getBoolean("disconnect-action.enabled")) {
 			for (String command : configsFile.getStringList("disconnect-action.commands")) {
+				if (command == null || command.isBlank()) continue;
 				command = command.replace("{player}", player.getName());
 				command = command.replace("{freezer}", playerFrozen.get(player.getUniqueId()).getFreezer());
 				command = command.replace("{reason}", playerFrozen.get(player.getUniqueId()).getReason());

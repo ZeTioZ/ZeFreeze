@@ -46,6 +46,10 @@ public class ZeFreezePlayerMoveListener implements Listener, FilesManagerUtils.R
 		if (!playerFrozen.containsKey(player.getUniqueId())) return;
 
 		final FreezeElement playerFreeze = playerFrozen.get(player.getUniqueId());
+		if (playerFreeze.getLocation() == null) {
+			playerFrozen.put(player.getUniqueId(), new FreezeElement(playerFreeze.getFreezer(), playerFreeze.getReason(), player.getLocation()));
+			return;
+		}
 
 		if (player.getLocation().getX() == playerFreeze.getLocation().getX()
 				&& player.getLocation().getZ() == playerFreeze.getLocation().getZ()

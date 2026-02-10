@@ -8,14 +8,15 @@ import fr.zetioz.zefreeze.guis.AntiDisconnectionGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Registry;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.StringUtil;
+import org.jspecify.annotations.NonNull;
 
 import java.io.FileNotFoundException;
 import java.text.DecimalFormat;
@@ -30,7 +31,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 	private final AntiDisconnectionGUI antiDisconnectionGUI;
 	private YamlConfiguration messages;
 	private YamlConfiguration config;
-	private Map<UUID, FreezeElement> playerFrozen;
+	private final Map<UUID, FreezeElement> playerFrozen;
 	private String prefix;
 
 	public ZeFreezeCommand(ZeFreezePlugin instance) throws FileNotFoundException
@@ -51,7 +52,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args)
+	public boolean onCommand(@NonNull CommandSender sender, Command cmd, @NonNull String label, String @NonNull [] args)
 	{
 		if(!cmd.getName().equalsIgnoreCase("zefreeze") && !cmd.getName().equalsIgnoreCase("zeunfreeze"))
 		{
@@ -66,30 +67,12 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 
 		switch(args[0].toLowerCase())
 		{
-			case "info" ->
-			{
-				handleInfoCommand(sender, args);
-			}
-			case "reload" ->
-			{
-				handleReloadCommand(sender);
-			}
-			case "control" ->
-			{
-				handleControlCommand(sender, args);
-			}
-			case "@a", "all" ->
-			{
-				handleFreezeAllCommand(cmd, sender, args);
-			}
-			case "radius" ->
-			{
-				handleRadiusCommand(cmd, sender, args);
-			}
-			default ->
-			{
-				handleUnfreezeCommand(cmd, sender, args);
-			}
+			case "info" -> handleInfoCommand(sender, args);
+			case "reload" -> handleReloadCommand(sender);
+			case "control" -> handleControlCommand(sender, args);
+			case "@a", "all" -> handleFreezeAllCommand(cmd, sender, args);
+			case "radius" -> handleRadiusCommand(cmd, sender, args);
+			default -> handleUnfreezeCommand(cmd, sender, args);
 		}
 		return true;
 	}
@@ -119,6 +102,10 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 		}
 
 		FreezeElement freeze = playerFrozen.get(playerUUID);
+		if (freeze.getLocation() == null) {
+			sendMessage(sender, messages.getStringList("errors.control-location-not-set"), prefix);
+			return;
+		}
 		DecimalFormat decimalFormat = new DecimalFormat("#.##");
 		sendMessage(sender, messages.getStringList("target-freeze-info"), prefix, "{freezer}", freeze.getFreezer(), "{reason}", freeze.getReason(), "{loc_x}", decimalFormat.format(freeze.getLocation().getX()), "{loc_y}", decimalFormat.format(freeze.getLocation().getY()), "{loc_z}", decimalFormat.format(freeze.getLocation().getZ()));
 	}
@@ -159,10 +146,10 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 
 	private void saveControlLocation(Player player)
 	{
-		config.set("control-location.world", player.getLocation().getWorld().getName());
-		config.set("control-location.x", Optional.of(player.getLocation().getBlockX()));
-		config.set("control-location.y", Optional.of(player.getLocation().getBlockY()));
-		config.set("control-location.z", Optional.of(player.getLocation().getBlockZ()));
+		config.set("control-location.world", Objects.requireNonNull(player.getLocation().getWorld()).getName());
+		config.set("control-location.x", player.getLocation().getBlockX());
+		config.set("control-location.y", player.getLocation().getBlockY());
+		config.set("control-location.z", player.getLocation().getBlockZ());
 		instance.getFilesManagerUtils().saveSimpleYaml("config");
 	}
 
@@ -185,9 +172,9 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 		double x = config.getDouble("control-location.x");
 		double y = config.getDouble("control-location.y");
 		double z = config.getDouble("control-location.z");
+		assert world != null;
 		Location controlLocation = new Location(Bukkit.getWorld(world), x, y, z);
 
-		playerFrozen.remove(frozenPlayer.getUniqueId());
 		playerFrozen.computeIfPresent(frozenPlayer.getUniqueId(), (k, freeze) -> new FreezeElement(freeze.getFreezer(), freeze.getReason(), controlLocation));
 
 		frozenPlayer.teleport(controlLocation);
@@ -257,7 +244,7 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 
 	private void toggleFreeze(Command cmd, CommandSender sender, String[] args, OfflinePlayer offlinePlayer)
 	{
-		if(offlinePlayer.getName().equals(sender.getName()))
+		if(Objects.equals(offlinePlayer.getName(), sender.getName()))
 		{
 			sendMessage(sender, messages.getStringList("errors.self-freeze"), prefix);
 			return;
@@ -287,12 +274,13 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 
 		if(!offlinePlayer.isOnline())
 		{
+			instance.getPendingEffectRemoval().add(offlinePlayer.getUniqueId());
 			return;
 		}
 
 		config.getStringList("freeze-effects").forEach(effect -> {
-			if(PotionEffectType.getByName(effect) != null){
-				((Player)offlinePlayer).removePotionEffect(Objects.requireNonNull(PotionEffectType.getByName(effect)));
+			if(Registry.EFFECT.match(effect) != null){
+				((Player)offlinePlayer).removePotionEffect(Objects.requireNonNull(Registry.EFFECT.match(effect)));
 			} else {
 				instance.getLogger().severe(String.format("The potion %s doesn't exist! Please, change it...", effect));
 			}
@@ -300,14 +288,19 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 
 		Player player = (Player) offlinePlayer;
 		player.closeInventory();
-		SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound"), 1, 1);
+		SoundUtils.playPlayerSound(instance, player, player.getLocation(), config.getString("unfreeze-sound", "ENTITY_PIG_DEATH"), 1, 1);
 		sendMessage(player, messages.getStringList("target-unfrozen"), prefix, "{freezer}", sender.getName());
 	}
 
 	private void freezePlayer(CommandSender sender, String[] args, OfflinePlayer offlinePlayer)
 	{
 		String reason = args.length >= 2 ? String.join(" ", Arrays.copyOfRange(args, 1, args.length)) : messages.getString("no-reason", "No reason");
-		Location location = offlinePlayer.isOnline() ? offlinePlayer.getPlayer().getLocation() : config.getLocation("control-location");
+		Location location = offlinePlayer.isOnline() ? Objects.requireNonNull(offlinePlayer.getPlayer()).getLocation() : config.getLocation("control-location");
+		if(!offlinePlayer.isOnline() && location == null)
+		{
+			sendMessage(sender, messages.getStringList("errors.control-location-not-set"), prefix);
+			return;
+		}
 
 		if(offlinePlayer.isOnline() && Objects.requireNonNull(offlinePlayer.getPlayer()).hasPermission("zefreeze.bypass"))
 		{
@@ -330,19 +323,19 @@ public class ZeFreezeCommand implements TabExecutor, FilesManagerUtils.Reloadabl
 			player.openInventory(antiDisconnectionGUI.buildInventory());
 		}
 		config.getStringList("freeze-effects").forEach(effect -> {
-			if(PotionEffectType.getByName(effect) != null){
-				PotionEffect potionEffect = PotionEffectType.getByName(effect).createEffect(Integer.MAX_VALUE, 0);
+			if(Registry.EFFECT.match(effect) != null){
+				PotionEffect potionEffect = Objects.requireNonNull(Registry.EFFECT.match(effect)).createEffect(Integer.MAX_VALUE, 0);
 				player.addPotionEffect(potionEffect);
 			} else {
 				instance.getLogger().severe(String.format("The potion %s doesn't exist! Please, change it...", effect));
 			}
 		});
-		SoundUtils.playPlayerSound(instance, player, location, config.getString("freeze-sound"), 1, 1);
+		SoundUtils.playPlayerSound(instance, player, location, config.getString("freeze-sound", "ENTITY_GHAST_SCREAM"), 1, 1);
 		sendMessage(player, messages.getStringList("target-frozen"), prefix, "{freezer}", sender.getName(), "{reason}", reason);
 	}
 
 	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args)
+	public List<String> onTabComplete(CommandSender sender, @NonNull Command command, @NonNull String alias, String @NonNull [] args)
 	{
 		List<String> completions = new ArrayList<>();
 		List<String> options = new ArrayList<>(List.of("help", "info"));
