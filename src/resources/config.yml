@@ -23,10 +23,10 @@ block-y-axis: true
 freeze-message-cooldown: 5
 
 # You can find all the available sound here https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Sound.html
-# Sound played when the target is freezed
+# Sound played when the target is frozen
 freeze-sound: ENTITY_GHAST_SCREAM
 
-# Sound played when the target is unfreezed
+# Sound played when the target is unfrozen
 unfreeze-sound: ENTITY_PIG_DEATH
 
 # Disable the interaction of a frozen player
