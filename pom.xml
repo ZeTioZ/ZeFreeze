@@ -37,7 +37,7 @@
 	<dependency>
 		<groupId>fr.zetioz</groupId>
 		<artifactId>CoreUtils</artifactId>
-		<version>1.4.4</version>
+		<version>1.4.5</version>
 	</dependency>
 
 	<dependency>
